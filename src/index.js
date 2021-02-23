@@ -8,8 +8,6 @@ import "dotenv/config";
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-console.log("process.env.PORT :::", process.env.PORT);
-
 app.enable("trust proxy");
 app.use(bodyParser.json());
 app.use(
