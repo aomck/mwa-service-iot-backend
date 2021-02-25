@@ -4,11 +4,14 @@ import cors from "cors";
 import morgan from "morgan";
 import route from "./route";
 import "dotenv/config";
+import { mqttPublish, mqttSubscribe } from "./services/mqtt";
+
+mqttPublish();
+mqttSubscribe();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
-
-app.enable("trust proxy");
+// app.enable("trust proxy");
 app.use(bodyParser.json());
 app.use(
   cors({
@@ -21,7 +24,7 @@ app.use(morgan("dev"));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use("/apis", route);
+app.use("/apis/v1", route);
 
 app.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);
