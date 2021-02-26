@@ -8,6 +8,6 @@ router.get("/history", deviceController.getAllhistory);
 
 //getByid
 router.get("/:deviceId", deviceController.getById);
-router.get("/:deviceId/history", deviceController.getHistoryById);
+router.get("/:deviceId/history", deviceController.getAllhistoryByid);
 
 export default router;

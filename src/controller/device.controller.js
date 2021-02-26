@@ -49,3 +49,19 @@ export const getAllhistory = async (req, res) => {
       .json({ statusCode: "500", message: "Internal Server Error" });
   }
 };
+
+export const getAllhistoryByid = async (req, res) => {
+  try {
+    const {
+      params: { deviceId },
+      query,
+    } = req;
+
+    const respData = await deviceService.listViewHistory({ deviceId, query });
+    res.json(respData);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ statusCode: "500", message: "Internal Server Error" });
+  }
+};

@@ -1,18 +1,40 @@
 import express from "express";
+import http from "http";
 import bodyParser from "body-parser";
 import cors from "cors";
 import morgan from "morgan";
 import route from "./route";
 import "dotenv/config";
 import { mqttPublish, mqttSubscribe } from "./services/mqtt";
+import socketIO from "socket.io";
 
 mqttPublish();
 mqttSubscribe();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+const server = http.createServer(app);
+
+export const io = socketIO(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("Socket connected", socket.id);
+});
+
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 // app.enable("trust proxy");
 app.use(bodyParser.json());
+
 app.use(
   cors({
     origin: "*",
@@ -26,6 +48,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/apis/v1", route);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);
 });

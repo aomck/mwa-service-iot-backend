@@ -23,7 +23,7 @@ const deviceValue = async () => {
           })
         );
       });
-    }, 5000); 
+    }, 5000);
   } catch (error) {
     console.log("error", error);
   }
