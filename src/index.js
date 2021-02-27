@@ -25,6 +25,9 @@ export const io = socketIO(server, {
 
 io.on("connection", (socket) => {
   console.log("Socket connected", socket.id);
+  socket.on("disconnect", () => {
+    console.log("disconnect");
+  });
 });
 
 app.use((req, res, next) => {

@@ -15,13 +15,15 @@ const deviceValue = async () => {
     setInterval(async () => {
       const result = await deviceQuery.find();
       result.forEach((device) => {
-        client.publish(
-          "iot",
-          JSON.stringify({
-            ...randomValue(),
-            deviceId: device.attributes.deviceId,
-          })
-        );
+        if (device.attributes.deviceId !== "AAA") {
+          client.publish(
+            "iot",
+            JSON.stringify({
+              ...randomValue(),
+              deviceId: device.attributes.deviceId,
+            })
+          );
+        }
       });
     }, 5000);
   } catch (error) {

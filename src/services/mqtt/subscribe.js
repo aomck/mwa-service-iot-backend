@@ -19,21 +19,26 @@ const deviceValue = async () => {
         }
       });
       client.on("message", async (topic, message) => {
-        const value = JSON.parse(message);
-        const resp = await getDeviceId(value.deviceId);
-        if (resp) {
-          // console.log("io", io.emit);
-          io.emit(`iot/${value.deviceId}`, {
-            ...value,
+        const valueDevice = JSON.parse(message);
+        const device = await getDeviceId(valueDevice.deviceId);
+        if (device) {
+          delete valueDevice["deviceId"];
+          const payload = {
+            deviceId: device.attributes.deviceId,
             createdAt: new Date().toISOString(),
-          });
-          io.emit(`iot`, {
-            ...value,
-            createdAt: new Date().toISOString(),
-          });
-          delete value["deviceId"];
-          updateDeviceValue(value, resp.id);
-          createHistorty(value, resp);
+            value: {
+              ...valueDevice,
+            },
+          };
+          io.emit(`iot/${device.attributes.deviceId}`, payload);
+          io.emit(`iot`, payload);
+          updateDeviceValue(valueDevice, device.id);
+          const history = await createHistorty(valueDevice, device);
+
+          for (const [key, value] of Object.entries(valueDevice)) {
+            // console.log(`${key}: ${value}`);
+            alert({ device, history, value, key });
+          }
         }
       });
     });
@@ -61,6 +66,53 @@ const createHistorty = async (payload, deviceId) => {
   history.set("value", payload);
   history.set("device", deviceId);
   return await history.save();
+};
+
+const alert = async ({ device, history, value, key }) => {
+  // console.log("device", device);
+  // console.log("history", history);
+  // console.log("value", value);
+  // console.log("key :::", key);
+  const parameterQuery = new Parse.Query("Parameter");
+  parameterQuery.equalTo("key", key);
+  parameterQuery
+    .first()
+    .then(async (results) => {
+      const arrayIndex = results.attributes.index;
+      if (arrayIndex) {
+        const findAlert = results.attributes.index.find((val) => {
+          if (
+            val.alert === true &&
+            value >= val.value.min &&
+            value <= val.value.max
+          ) {
+            return val;
+          }
+        });
+        if (findAlert) {
+          // console.log("device :::", device);
+          console.log("findAlert.index :::", findAlert.index);
+          const notificationQuery = new Parse.Query("Notification");
+          notificationQuery.descending("createdAt");
+          notificationQuery.equalTo("index.index", findAlert.index);
+          notificationQuery.equalTo("device", device);
+          const resultNotification = await notificationQuery.first();
+          console.log("resultNotification :::", resultNotification);
+
+          const notificationObject = Parse.Object.extend("Notification");
+          let notification = new notificationObject();
+          notification.set("device", device);
+          notification.set("history", history);
+          notification.set("index", findAlert);
+          notification.set("parameter", results);
+          notification.set("isShow", true);
+          // notification.save();
+        }
+      }
+    })
+    .catch((error) => {
+      console.log("results :::", error);
+    });
 };
 
 export default deviceValue;
