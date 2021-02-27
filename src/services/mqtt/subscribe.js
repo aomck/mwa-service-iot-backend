@@ -37,7 +37,7 @@ const deviceValue = async () => {
 
           for (const [key, value] of Object.entries(valueDevice)) {
             // console.log(`${key}: ${value}`);
-            alert({ device, history, value, key });
+            getParameterAndCreateNotification({ device, history, value, key });
           }
         }
       });
@@ -68,7 +68,12 @@ const createHistorty = async (payload, deviceId) => {
   return await history.save();
 };
 
-const alert = async ({ device, history, value, key }) => {
+const getParameterAndCreateNotification = async ({
+  device,
+  history,
+  value,
+  key,
+}) => {
   // console.log("device", device);
   // console.log("history", history);
   // console.log("value", value);
@@ -90,29 +95,42 @@ const alert = async ({ device, history, value, key }) => {
           }
         });
         if (findAlert) {
-          // console.log("device :::", device);
-          console.log("findAlert.index :::", findAlert.index);
+          // console.log("findAlert :::", findAlert);
           const notificationQuery = new Parse.Query("Notification");
           notificationQuery.descending("createdAt");
-          notificationQuery.equalTo("index.index", findAlert.index);
           notificationQuery.equalTo("device", device);
+          notificationQuery.equalTo("index.index", findAlert.index);
           const resultNotification = await notificationQuery.first();
-          console.log("resultNotification :::", resultNotification);
+          if (!resultNotification) {
+            createNotification({ device, history, findAlert, results });
+          } else if (resultNotification) {
+            var date = new Date();
+            var FIVE_MIN = 1 * 60 * 1000;
 
-          const notificationObject = Parse.Object.extend("Notification");
-          let notification = new notificationObject();
-          notification.set("device", device);
-          notification.set("history", history);
-          notification.set("index", findAlert);
-          notification.set("parameter", results);
-          notification.set("isShow", true);
-          // notification.save();
+            if (
+              date - new Date(resultNotification.attributes.createdAt) >
+              FIVE_MIN
+            ) {
+              createNotification({ device, history, findAlert, results });
+            }
+          }
         }
       }
     })
     .catch((error) => {
       console.log("results :::", error);
     });
+};
+
+const createNotification = ({ device, history, findAlert, results }) => {
+  const notificationObject = Parse.Object.extend("Notification");
+  let notification = new notificationObject();
+  notification.set("device", device);
+  notification.set("history", history);
+  notification.set("index", findAlert);
+  notification.set("parameter", results);
+  notification.set("isShow", true);
+  return notification.save();
 };
 
 export default deviceValue;
