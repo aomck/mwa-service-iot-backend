@@ -10,4 +10,7 @@ router.get("/history", deviceController.getAllhistory);
 router.get("/:deviceId", deviceController.getById);
 router.get("/:deviceId/history", deviceController.getAllhistoryByid);
 
+//put
+router.put("/:deviceId", deviceController.updateDevice);
+
 export default router;

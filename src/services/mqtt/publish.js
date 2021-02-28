@@ -1,12 +1,5 @@
 import Parse from "../../configs/parse-iot";
-import mqtt from "mqtt";
-
-var client = mqtt.connect({
-  host: "68.183.225.201",
-  port: 1883,
-  username: "mqttuser",
-  password: "mqttuser2021!",
-});
+import mqttClient from "../../configs/mqtt";
 
 const deviceValue = async () => {
   try {
@@ -16,7 +9,7 @@ const deviceValue = async () => {
       const result = await deviceQuery.find();
       result.forEach((device) => {
         if (device.attributes.deviceId !== "AAA") {
-          client.publish(
+          mqttClient.publish(
             "iot",
             JSON.stringify({
               ...randomValue(),
@@ -42,6 +35,6 @@ export const randomValue = () => {
     temp: getRndInteger(25, 50),
     hum: getRndInteger(50, 80),
     light: getRndInteger(50, 80),
-    pm2: getRndInteger(5, 250),
+    pm2: getRndInteger(5, 150),
   };
 };

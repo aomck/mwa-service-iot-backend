@@ -1,24 +1,17 @@
 import Parse from "../../configs/parse-iot";
-import mqtt from "mqtt";
+import mqttClient from "../../configs/mqtt";
 import { io } from "../../index";
-
-var client = mqtt.connect({
-  host: "68.183.225.201",
-  port: 1883,
-  username: "mqttuser",
-  password: "mqttuser2021!",
-});
 
 const deviceValue = async () => {
   try {
-    client.on("connect", () => {
+    mqttClient.on("connect", () => {
       console.log("Conneted");
-      client.subscribe("iot", (err) => {
+      mqttClient.subscribe("iot", (err) => {
         if (err) {
           console.log(err);
         }
       });
-      client.on("message", async (topic, message) => {
+      mqttClient.on("message", async (topic, message) => {
         const valueDevice = JSON.parse(message);
         const device = await getDeviceId(valueDevice.deviceId);
         if (device) {
@@ -36,7 +29,6 @@ const deviceValue = async () => {
           const history = await createHistorty(valueDevice, device);
 
           for (const [key, value] of Object.entries(valueDevice)) {
-            // console.log(`${key}: ${value}`);
             getParameterAndCreateNotification({ device, history, value, key });
           }
         }
@@ -74,10 +66,6 @@ const getParameterAndCreateNotification = async ({
   value,
   key,
 }) => {
-  // console.log("device", device);
-  // console.log("history", history);
-  // console.log("value", value);
-  // console.log("key :::", key);
   const parameterQuery = new Parse.Query("Parameter");
   parameterQuery.equalTo("key", key);
   parameterQuery
@@ -95,14 +83,19 @@ const getParameterAndCreateNotification = async ({
           }
         });
         if (findAlert) {
-          // console.log("findAlert :::", findAlert);
           const notificationQuery = new Parse.Query("Notification");
-          notificationQuery.descending("createdAt");
           notificationQuery.equalTo("device", device);
-          notificationQuery.equalTo("index.index", findAlert.index);
+          notificationQuery.descending("createdAt");
+          notificationQuery.limit(1);
           const resultNotification = await notificationQuery.first();
           if (!resultNotification) {
-            createNotification({ device, history, findAlert, results });
+            const newNotification = await createNotification({
+              device,
+              history,
+              findAlert,
+              results,
+            });
+            notificaitonSocket({ device, newNotification });
           } else if (resultNotification) {
             var date = new Date();
             var FIVE_MIN = 1 * 60 * 1000;
@@ -111,7 +104,23 @@ const getParameterAndCreateNotification = async ({
               date - new Date(resultNotification.attributes.createdAt) >
               FIVE_MIN
             ) {
-              createNotification({ device, history, findAlert, results });
+              const newNotification = await createNotification({
+                device,
+                history,
+                findAlert,
+                results,
+              });
+              notificaitonSocket({ device, newNotification });
+            } else if (
+              resultNotification.attributes.index.index !== findAlert.index
+            ) {
+              const newNotification = await createNotification({
+                device,
+                history,
+                findAlert,
+                results,
+              });
+              notificaitonSocket({ device, newNotification });
             }
           }
         }
@@ -131,6 +140,12 @@ const createNotification = ({ device, history, findAlert, results }) => {
   notification.set("parameter", results);
   notification.set("isShow", true);
   return notification.save();
+};
+
+const notificaitonSocket = ({ device, newNotification }) => {
+  device.set("isNotification", true);
+  io.emit(`noti`, newNotification);
+  return device.save();
 };
 
 export default deviceValue;

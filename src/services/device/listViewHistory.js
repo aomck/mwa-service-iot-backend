@@ -2,7 +2,6 @@ import Parse from "../../configs/parse-iot";
 
 export default async ({ deviceId, query }) => {
   try {
-    console.log("deviceId :::", query);
     const historyQuery = new Parse.Query("History");
     historyQuery.descending("createdAt");
     // query.includeAll("*");

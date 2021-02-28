@@ -7,6 +7,7 @@ import route from "./route";
 import "dotenv/config";
 import { mqttPublish, mqttSubscribe } from "./services/mqtt";
 import socketIO from "socket.io";
+import swagger from "./swagger.json";
 
 mqttPublish();
 mqttSubscribe();
@@ -48,6 +49,10 @@ app.use(
 app.use(morgan("dev"));
 
 app.use(bodyParser.urlencoded({ extended: false }));
+
+app.get("/api/swagger", (req, res) => {
+  res.json(swagger);
+});
 
 app.use("/apis/v1", route);
 
