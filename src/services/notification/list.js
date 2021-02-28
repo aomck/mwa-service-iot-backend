@@ -12,6 +12,6 @@ export default async ({ query }) => {
     const result = notificationQuery.find();
     return result;
   } catch (error) {
-    console.log("error");
+    console.log("error", error);
   }
 };

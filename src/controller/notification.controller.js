@@ -4,7 +4,6 @@ export const getAll = async (req, res) => {
   try {
     const { query } = req;
     const respData = await notificationService.list({ query });
-    console.log("respData :::", respData.length);
     res.json(respData);
   } catch (error) {
     res

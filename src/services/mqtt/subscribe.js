@@ -1,6 +1,9 @@
 import Parse from "../../configs/parse-iot";
 import mqttClient from "../../configs/mqtt";
 import { io } from "../../index";
+import axois from "axios";
+import { format } from "date-fns";
+import th from "date-fns/locale/th";
 
 const deviceValue = async () => {
   try {
@@ -142,10 +145,46 @@ const createNotification = ({ device, history, findAlert, results }) => {
   return notification.save();
 };
 
-const notificaitonSocket = ({ device, newNotification }) => {
-  device.set("isNotification", true);
-  io.emit(`noti`, newNotification);
-  return device.save();
+const notificaitonSocket = async ({ device, newNotification }) => {
+  try {
+    io.emit(`noti`, newNotification);
+    device.set("isNotification", true);
+    const params = new URLSearchParams();
+    params.append(
+      "message",
+      `\r\n${format(
+        new Date(newNotification.attributes.createdAt),
+        "dd MMMM yyyy HH:MM:SS",
+        {
+          locale: th,
+        }
+      )}\r\nสถานี ${newNotification.attributes.device.attributes.deviceId}  ${
+        newNotification.attributes.device.attributes.description
+      }\r\n${
+        newNotification.attributes.parameter.attributes.nameTh
+      } มีปริมาณสูงถึง ${
+        newNotification.attributes.history.attributes.value[
+          newNotification.attributes.parameter.attributes.key
+        ]
+      } ${
+        newNotification.attributes.parameter.attributes.unit
+      }\r\nอยู่ในเกณฑ์ ${
+        newNotification.attributes.index.index === 4 ? "🟠" : "🔴"
+      } ${newNotification.attributes.index.name}`
+    );
+    // \r\n
+    const config = {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: "Bearer akWhE1SkmGGwVy0vSm3F2NJlXj22dldmSmIm325y0s4",
+      },
+    };
+
+    await axois.post(`https://notify-api.line.me/api/notify`, params, config);
+    return await device.save();
+  } catch (error) {
+    console.log("error", error);
+  }
 };
 
 export default deviceValue;

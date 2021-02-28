@@ -7,7 +7,7 @@ export default async ({ notificationId, body }) => {
     notificationQuery.equalTo("objectId", notificationId);
     const result = await notificationQuery.first();
     if (result) {
-      result.set("isShow", body?.isShow || result.attributes.isShow);
+      result.set("isShow", body.isShow && result.attributes.isShow);
       const device = await deviceQuery.get(result.attributes.device.id);
       device.set("isNotification", false);
       device.save();
