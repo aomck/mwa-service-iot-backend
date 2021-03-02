@@ -154,7 +154,7 @@ const notificaitonSocket = async ({ device, newNotification }) => {
       "message",
       `\r\n${format(
         new Date(newNotification.attributes.createdAt),
-        "dd MMMM yyyy HH:MM:SS",
+        "dd MMMM yyyy HH:mm:ss",
         {
           locale: th,
         }
