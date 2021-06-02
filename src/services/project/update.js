@@ -15,7 +15,7 @@ export default async ({ body, projectId, file }) => {
     project.id = projectId;
     project.set("updatedBy", findUser);
 
-    if (file.fieldname === "icon") {
+    if (file?.fieldname && file.fieldname === "icon") {
       project.set("icon", await parseUploadFile({ file }));
     }
 

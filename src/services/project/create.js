@@ -14,7 +14,7 @@ export default async ({ body, file }) => {
     const project = new projectObj();
 
     project.set("createdBy", findUser);
-    if (file.fieldname === "icon") {
+    if (file?.fieldname && file.fieldname === "icon") {
       project.set("icon", await parseUploadFile({ file }));
     }
     for await (const [key, value] of Object.entries(body)) {

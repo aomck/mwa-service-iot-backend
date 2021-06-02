@@ -1,10 +1,10 @@
 import Parse from "../../configs/parse-iot";
 
-export default async ({ projectId }) => {
+export default async ({ productId }) => {
   try {
-    const projectQuery = new Parse.Query("Project");
-    const result = await projectQuery
-      .equalTo("objectId", projectId)
+    const productQuery = new Parse.Query("Product");
+    const result = await productQuery
+      .equalTo("objectId", productId)
       .equalTo("isDeleted", false)
       .first();
     return result;

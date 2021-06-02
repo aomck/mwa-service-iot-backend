@@ -3,7 +3,7 @@ import Parse from "../../configs/parse-iot";
 export default async () => {
   try {
     const projectQuery = new Parse.Query("Project");
-    const result = projectQuery.find();
+    const result = projectQuery.equalTo("isDeleted", false).find();
 
     return result;
   } catch (error) {

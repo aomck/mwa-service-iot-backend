@@ -16,7 +16,7 @@ export default async ({ body, file, stationId }) => {
     station.id = stationId;
 
     station.set("updatedBy", findUser);
-    if (file.fieldname === "map") {
+    if (file?.fieldname && file.fieldname === "map") {
       station.set("map", await parseUploadFile({ file }));
     }
     for await (const [key, value] of Object.entries(body)) {

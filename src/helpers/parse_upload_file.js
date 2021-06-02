@@ -14,7 +14,7 @@ const parseUploadFile = async ({ file }) => {
     );
     return fileParse;
   } catch (error) {
-    console.log("error parseUploadFile parseUploadFile parseUploadFile", error);
+    console.log("error ", error);
   }
 };
 
