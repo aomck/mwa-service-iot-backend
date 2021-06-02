@@ -21,7 +21,6 @@ const validationField = (req, res, next) => {
 const router = express.Router();
 
 router.get("/", projectController.getAll);
-router.get("/:projectId", projectController.getById);
 router.post(
   "/",
   upload.single("icon"),
@@ -29,6 +28,7 @@ router.post(
   validationField,
   projectController.create
 );
+router.get("/:projectId", projectController.getById);
 router.patch(
   "/:projectId",
   upload.single("icon"),
@@ -36,4 +36,6 @@ router.patch(
   validationField,
   projectController.update
 );
+router.delete("/:projectId", projectController.deleteByid);
+
 export default router;
