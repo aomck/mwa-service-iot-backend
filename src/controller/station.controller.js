@@ -88,9 +88,10 @@ export const deleteByid = async (req, res) => {
 
   try {
     const respData = await stationService.deleteById({ stationId });
-    !respData
-      ? res.status(400).json({ statusCode: "400", message: "Bad Request" })
-      : res.json(respData);
+    res.status(200).json({
+      success: true,
+      message: "station has been deleted successfully",
+    });
   } catch (error) {
     res
       .status(500)
