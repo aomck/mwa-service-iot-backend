@@ -4,4 +4,6 @@ export * as parameterService from "./parameter";
 export * as notificationService from "./notification";
 export * as projectService from "./project";
 export * as stationService from "./station";
-export * as productService from "./product";
+export * as userService from "./user";
+export * as roleService from "./role";
+export * as unitService from "./unit";

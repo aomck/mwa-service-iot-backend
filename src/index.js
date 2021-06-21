@@ -54,7 +54,7 @@ app.get("/api/swagger", (req, res) => {
   res.json(swagger);
 });
 
-app.use("/apis/v1", route);
+app.use("/apis", route);
 
 server.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);
