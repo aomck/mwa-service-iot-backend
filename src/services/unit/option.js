@@ -5,6 +5,7 @@ export default async ({ session, query }) => {
   try {
     let query = new Parse.Query("Unit");
     let curUser = await curUserRoleUnit(session);
+    console.log("====>", curUser);
     let curUserObj = new Parse.Object("Users");
     curUserObj.id = curUser.objectId;
     if (curUser.role.name !== def.role.superAdmin) {
@@ -65,7 +66,7 @@ export default async ({ session, query }) => {
         };
       }
     }
-    return role;
+    // return role;   
   } catch (error) {
     console.log("error", error);
     throw error;

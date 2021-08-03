@@ -4,7 +4,7 @@ const CLIENT_API = process.env.CLIENT_API;
 const FILES_SERVER = process.env.FILES_SERVER;
 export default async ({ session, userId }) => {
   try {
-    // console.log("USER ID", userId);
+    console.log("USER ID", userId);
     const userObj = new Parse.Query("Users");
     userObj.equalTo("objectId", userId);
     userObj.include(["role", "role.User", "units", "contractor"]);
