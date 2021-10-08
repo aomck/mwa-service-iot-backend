@@ -2,7 +2,8 @@ import { stationService } from "../services";
 
 export const getAll = async (req, res) => {
   try {
-    const respData = await stationService.list();
+    const { user_id } = req;
+    const respData = await stationService.list({ user_id });
     res.json(respData);
   } catch (error) {
     res

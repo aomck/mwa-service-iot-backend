@@ -4,6 +4,7 @@ const CLIENT_API = process.env.CLIENT_API;
 export default async (session) => {
   try {
     const userObj = new Parse.Query("Users");
+    // console.log("SESSSS ",session)
     const userProfile = await axios.get(
       `${CLIENT_API}/apis/session?session=${session}`
     );

@@ -21,6 +21,7 @@ const validationField = (req, res, next) => {
 const router = express.Router();
 
 router.get("/", projectController.getAll);
+router.get("/station", projectController.getAllStation);
 router.post(
   "/",
   upload.single("icon"),

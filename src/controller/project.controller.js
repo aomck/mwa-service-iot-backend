@@ -2,7 +2,20 @@ import { projectService } from "../services";
 
 export const getAll = async (req, res) => {
   try {
-    const respData = await projectService.list();
+    const { user_id } = req;
+    const respData = await projectService.list({ user_id });
+    res.json(respData);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ statusCode: "500", message: "Internal Server Error" });
+  }
+};
+
+export const getAllStation = async (req, res) => {
+  try {
+    const { user_id } = req;
+    const respData = await projectService.listStation({ user_id });
     res.json(respData);
   } catch (error) {
     res

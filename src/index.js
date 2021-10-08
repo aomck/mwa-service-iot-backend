@@ -5,6 +5,7 @@ import cors from "cors";
 import morgan from "morgan";
 import route from "./route";
 import "dotenv/config";
+import { checkUser } from "./middlewares";
 import { mqttPublish, mqttSubscribe } from "./services/mqtt";
 import socketIO from "socket.io";
 import swagger from "./swagger.json";
@@ -54,7 +55,7 @@ app.get("/api/swagger", (req, res) => {
   res.json(swagger);
 });
 
-app.use("/apis", route);
+app.use("/apis", checkUser, route);
 
 server.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);
