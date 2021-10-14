@@ -1,4 +1,6 @@
 import Parse from "../../configs/parse-iot";
+import "dotenv/config";
+const CLIENT_API = process.env.CLIENT_API;
 
 export default async ({ projectId }) => {
   try {

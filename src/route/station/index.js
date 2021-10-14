@@ -21,9 +21,10 @@ const validationField = (req, res, next) => {
 const router = express.Router();
 
 router.get("/", stationController.getAll);
+router.get("/project/:projectId", stationController.getByProject);
 router.post(
-  "/",
-  upload.single("map"),
+  "/:projectId",
+  upload.array("files"),
   createvalidateion,
   validationField,
   stationController.create
@@ -31,7 +32,7 @@ router.post(
 router.get("/:stationId", stationController.getById);
 router.patch(
   "/:stationId",
-  upload.single("map"),
+  upload.array("files"),
   createvalidateion,
   validationField,
   stationController.update

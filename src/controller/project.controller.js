@@ -42,10 +42,10 @@ export const getById = async (req, res) => {
 };
 
 export const create = async (req, res) => {
-  const { body, file } = req;
+  const { body, file, user_id } = req;
 
   try {
-    await projectService.create({ body, file });
+    await projectService.create({ body, file, user_id });
     res.status(201).json({
       success: true,
       message: "project has been created successfully",
@@ -62,20 +62,16 @@ export const update = async (req, res) => {
     body,
     params: { projectId },
     file,
+    user_id,
   } = req;
 
   try {
-    const respData = await projectService.view({ projectId });
-    !respData &&
-      res.status(400).json({ statusCode: "400", message: "Bad Request" });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ statusCode: "500", message: "Internal Server Error" });
-  }
-
-  try {
-    const respData = await projectService.update({ body, projectId, file });
+    const respData = await projectService.update({
+      body,
+      projectId,
+      file,
+      user_id,
+    });
     res.json(respData);
   } catch (error) {
     res
@@ -87,10 +83,11 @@ export const update = async (req, res) => {
 export const deleteByid = async (req, res) => {
   const {
     params: { projectId },
+    user_id
   } = req;
 
   try {
-    const respData = await projectService.view({ projectId });
+    const respData = await projectService.view({ projectId,user_id });
     !respData &&
       res.status(400).json({ statusCode: "400", message: "Bad Request" });
   } catch (error) {

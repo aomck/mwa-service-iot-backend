@@ -13,7 +13,7 @@ export default async ({ user_id }) => {
       .equalTo("isActive", true)
       .includeAll()
       .find();
-    console.log("result", result);
+    // console.log("result", result);
     return result;
   } catch (error) {
     console.log("error", error);
