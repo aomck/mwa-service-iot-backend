@@ -5,7 +5,7 @@ const router = express.Router();
 //getAll
 router.get("/", deviceController.getAll);
 router.get("/history", deviceController.getAllhistory);
-
+router.get("/station/:stationId", deviceController.getByStation);
 //getByid
 router.get("/:deviceId", deviceController.getById);
 router.get("/:deviceId/history", deviceController.getAllhistoryByid);

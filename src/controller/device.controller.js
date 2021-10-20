@@ -11,6 +11,20 @@ export const getAll = async (req, res) => {
   }
 };
 
+export const getByStation = async (req, res) => {
+  try {
+    const {
+      params: { stationId },
+    } = req;
+    const respData = await deviceService.listByStation({stationId});
+    res.json(respData);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ statusCode: "500", message: "Internal Server Error" });
+  }
+};
+
 export const getById = async (req, res) => {
   try {
     const {

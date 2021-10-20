@@ -94,16 +94,6 @@ export const deleteByid = async (req, res) => {
   } = req;
 
   try {
-    const respData = await stationService.view({ stationId });
-    !respData &&
-      res.status(400).json({ statusCode: "400", message: "Bad Request" });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ statusCode: "500", message: "Internal Server Error" });
-  }
-
-  try {
     const respData = await stationService.deleteById({ stationId });
     res.status(200).json({
       success: true,
