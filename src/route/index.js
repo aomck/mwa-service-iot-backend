@@ -9,6 +9,7 @@ import notificationRoute from "./notification";
 import projectRoute from "./project";
 import stationRoute from "./station";
 import productRoute from "./product";
+import utilsRoute from './utils'
 
 const router = express.Router();
 
@@ -22,5 +23,6 @@ router.use("/notification", notificationRoute);
 router.use("/project", projectRoute);
 router.use("/station", stationRoute);
 router.use("/product", productRoute);
+router.use("/code",utilsRoute)
 
 export default router;

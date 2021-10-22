@@ -5,19 +5,21 @@ export default async ({ stationId }) => {
     const stationObj = await new Parse.Query("Station")
       .equalTo("code", stationId)
       .first();
+
     const stationQuery = new Parse.Query("Device");
     const result = await stationQuery
       .equalTo("isActive", true)
       .equalTo("isDeleted", false)
       .equalTo("station", stationObj)
-      .include("station")
+      .include(["station","template"])
       .withCount()
       .find();
+
 
     const resultPar = await Promise.all(
       result.results.map(async (d) => {
         let parameter = {};
-        let params = await d.relation("parameter").query().find();
+        let params = await d.get("template").relation("parameter").query().find();
         await params.map((p) => {
           parameter[p.get("key")] = p;
         });

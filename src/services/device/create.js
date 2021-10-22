@@ -2,17 +2,21 @@ import Parse from "../../configs/parse-iot";
 import parseUploadFile from "../../helpers/parse_upload_file";
 import mqttClient from "../../configs/mqtt";
 
-export default async ({ body, deviceId, files, user_id }) => {
+export default async ({ body, stationId, files, user_id }) => {
   try {
+    const stationObj = await new Parse.Query("Station")
+      .equalTo("code", stationId)
+      .first();
+
     const deviceObj = Parse.Object.extend("Device");
     const device = new deviceObj();
-    device.id = deviceId;
-
+    device.set("station", stationObj);
+    device.set("createdBy", user_id);
+    device.set("updatedBy", user_id);
     // console.log("user", user_id);
     // console.log("Body .... ", body);
     // console.log("FIles", files);
 
-    device.set("updatedBy", user_id);
     if (files && files.length > 0) {
       files.map(async (file) => {
         device.set(file.originalname, await parseUploadFile({ file }));
