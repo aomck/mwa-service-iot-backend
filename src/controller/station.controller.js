@@ -17,8 +17,13 @@ export const getByProject = async (req, res) => {
     const {
       params: { projectId },
       user_id,
+      query,
     } = req;
-    const respData = await stationService.listByProject({ projectId, user_id });
+    const respData = await stationService.listByProject({
+      projectId,
+      query,
+      user_id,
+    });
     res.json(respData);
   } catch (error) {
     res

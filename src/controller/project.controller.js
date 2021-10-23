@@ -2,8 +2,8 @@ import { projectService } from "../services";
 
 export const getAll = async (req, res) => {
   try {
-    const { user_id } = req;
-    const respData = await projectService.list({ user_id });
+    const { user_id ,query} = req;
+    const respData = await projectService.list({ user_id,query });
     res.json(respData);
   } catch (error) {
     res
@@ -14,8 +14,8 @@ export const getAll = async (req, res) => {
 
 export const getAllStation = async (req, res) => {
   try {
-    const { user_id } = req;
-    const respData = await projectService.listStation({ user_id });
+    const { user_id,query } = req;
+    const respData = await projectService.listStation({ user_id ,query});
     res.json(respData);
   } catch (error) {
     res

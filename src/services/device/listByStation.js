@@ -13,7 +13,7 @@ export default async ({ stationId, query }) => {
       let codeQuery = new Parse.Query("Device");
       codeQuery.matches("code", `.*${query.search}.*`);
       let nameQuery = new Parse.Query("Device");
-      nameQuery.matches("code", `.*${query.search}.*`);
+      nameQuery.matches("name", `.*${query.search}.*`);
       let tagQuery = new Parse.Query("Device");
       tagQuery.matches("tag", query.search);
       stationQuery = Parse.Query.or(codeQuery, nameQuery, tagQuery);
