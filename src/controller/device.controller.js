@@ -26,8 +26,9 @@ export const getByStation = async (req, res) => {
   try {
     const {
       params: { stationId },
+      query,
     } = req;
-    const respData = await deviceService.listByStation({ stationId });
+    const respData = await deviceService.listByStation({ stationId, query });
     res.json(respData);
   } catch (error) {
     res

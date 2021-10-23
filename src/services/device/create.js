@@ -13,6 +13,7 @@ export default async ({ body, stationId, files, user_id }) => {
     device.set("station", stationObj);
     device.set("createdBy", user_id);
     device.set("updatedBy", user_id);
+    device.set("isOnline", false);
     // console.log("user", user_id);
     // console.log("Body .... ", body);
     // console.log("FIles", files);
