@@ -46,6 +46,7 @@ export default async ({ stationId, query }) => {
           .get("template")
           .relation("parameter")
           .query()
+          .include(["display"])
           .find();
         await params.map((p) => {
           parameter[p.get("key")] = p;

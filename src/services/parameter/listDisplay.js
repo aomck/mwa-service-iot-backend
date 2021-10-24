@@ -2,19 +2,19 @@ import Parse from "../../configs/parse-iot";
 
 export default ({ user_id, query }) => {
   try {
-    let parameterQuery = new Parse.Query("Parameter");
+    let allQuery = new Parse.Query("DisplayType");
     if (query.search) {
-      let codeQuery = new Parse.Query("Parameter");
+      let codeQuery = new Parse.Query("DisplayType");
       codeQuery.matches("key", `.*${query.search}.*`);
-      let nameQuery = new Parse.Query("Parameter");
+      let nameQuery = new Parse.Query("DisplayType");
       nameQuery.matches("name", `.*${query.search}.*`);
-      let nameThQuery = new Parse.Query("Parameter");
+      let nameThQuery = new Parse.Query("DisplayType");
       nameThQuery.matches("nameTh", `.*${query.search}.*`);
-      let unitQuery = new Parse.Query("Parameter");
+      let unitQuery = new Parse.Query("DisplayType");
       unitQuery.matches("unit", `.*${query.search}.*`);
-      let tagQuery = new Parse.Query("Parameter");
+      let tagQuery = new Parse.Query("DisplayType");
       tagQuery.matches("tag", query.search);
-      parameterQuery = Parse.Query.or(
+      allQuery = Parse.Query.or(
         codeQuery,
         nameQuery,
         nameThQuery,
@@ -22,7 +22,7 @@ export default ({ user_id, query }) => {
         tagQuery
       );
     }
-    const result = parameterQuery
+    const result = allQuery
       .include(["display"])
       .equalTo("isDeleted", false)
       .equalTo("isActive", true)

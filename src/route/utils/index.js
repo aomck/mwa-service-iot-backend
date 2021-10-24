@@ -6,7 +6,8 @@ import { body, validationResult, check } from "express-validator";
 const upload = multer({});
 const router = express.Router();
 
-router.get("/", utilsController.code);
+router.get("/code", utilsController.code);
+router.get("/key", utilsController.key);
 
 
 export default router;

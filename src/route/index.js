@@ -23,6 +23,7 @@ router.use("/notification", notificationRoute);
 router.use("/project", projectRoute);
 router.use("/station", stationRoute);
 router.use("/product", productRoute);
-router.use("/code",utilsRoute)
+router.use("/utils",utilsRoute)
+
 
 export default router;
