@@ -2,8 +2,8 @@ import { projectService } from "../services";
 
 export const getAll = async (req, res) => {
   try {
-    const { user_id } = req;
-    const respData = await projectService.list({ user_id });
+    const { user_id ,query} = req;
+    const respData = await projectService.list({ user_id,query });
     res.json(respData);
   } catch (error) {
     res
@@ -14,8 +14,8 @@ export const getAll = async (req, res) => {
 
 export const getAllStation = async (req, res) => {
   try {
-    const { user_id } = req;
-    const respData = await projectService.listStation({ user_id });
+    const { user_id,query } = req;
+    const respData = await projectService.listStation({ user_id ,query});
     res.json(respData);
   } catch (error) {
     res
@@ -85,16 +85,6 @@ export const deleteByid = async (req, res) => {
     params: { projectId },
     user_id
   } = req;
-
-  try {
-    const respData = await projectService.view({ projectId,user_id });
-    !respData &&
-      res.status(400).json({ statusCode: "400", message: "Bad Request" });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ statusCode: "500", message: "Internal Server Error" });
-  }
 
   try {
     const respData = await projectService.deleteById({ projectId });

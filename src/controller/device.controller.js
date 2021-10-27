@@ -11,12 +11,24 @@ export const getAll = async (req, res) => {
   }
 };
 
+export const getTemplate = async (req, res) => {
+  try {
+    const respData = await deviceService.listTemplate();
+    res.json(respData);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ statusCode: "500", message: "Internal Server Error" });
+  }
+};
+
 export const getByStation = async (req, res) => {
   try {
     const {
       params: { stationId },
+      query,
     } = req;
-    const respData = await deviceService.listByStation({stationId});
+    const respData = await deviceService.listByStation({ stationId, query });
     res.json(respData);
   } catch (error) {
     res
@@ -80,14 +92,61 @@ export const getAllhistoryByid = async (req, res) => {
   }
 };
 
+export const createDevice = async (req, res) => {
+  try {
+    const {
+      body,
+      params: { stationId },
+      files,
+      user_id,
+    } = req;
+    const respData = await deviceService.create({
+      body,
+      stationId,
+      files,
+      user_id,
+    });
+    res.json(respData);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ statusCode: "500", message: "Internal Server Error" });
+  }
+};
+
 export const updateDevice = async (req, res) => {
   try {
     const {
+      body,
       params: { deviceId },
-      query,
+      files,
+      user_id,
     } = req;
-    const respData = await deviceService.update({ deviceId, query });
+    const respData = await deviceService.update({
+      body,
+      deviceId,
+      files,
+      user_id,
+    });
     res.json(respData);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ statusCode: "500", message: "Internal Server Error" });
+  }
+};
+
+export const deleteByid = async (req, res) => {
+  const {
+    params: { deviceId },
+  } = req;
+
+  try {
+    const respData = await deviceService.deleteById({ deviceId });
+    res.status(200).json({
+      success: true,
+      message: "station has been deleted successfully",
+    });
   } catch (error) {
     res
       .status(500)
