@@ -28,7 +28,10 @@ const deviceValue = async () => {
           };
           io.emit(`iot/${device.attributes.deviceId}`, payload);
           io.emit(`iot`, payload);
-          updateDeviceValue(valueDevice, device.id);
+          updateDeviceValue(
+            { ...device.get("value"), ...valueDevice },
+            device.id
+          );
           const history = await createHistorty(valueDevice, device);
 
           for (const [key, value] of Object.entries(valueDevice)) {
