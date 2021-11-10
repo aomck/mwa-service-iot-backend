@@ -8,6 +8,7 @@ const upload = multer({});
 router.get("/", deviceController.getAll);
 router.get("/history", deviceController.getAllhistory);
 router.get("/template", deviceController.getTemplate);
+router.get("/type", deviceController.getType);
 router.get("/station/:stationId", deviceController.getByStation);
 //getByid
 router.get("/:deviceId", deviceController.getById);

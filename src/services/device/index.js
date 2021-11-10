@@ -8,6 +8,7 @@ import listHistory from "./listHistory";
 import listViewHistory from "./listViewHistory";
 import listByStation from "./listByStation";
 import listTemplate from "./listTemplate";
+import listType from "./listType";
 export {
   view,
   viewHistory,
@@ -16,6 +17,7 @@ export {
   listHistory,
   listViewHistory,
   listTemplate,
+  listType,
   update,
   create,
   deleteById,

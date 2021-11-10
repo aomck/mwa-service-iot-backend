@@ -22,6 +22,17 @@ export const getTemplate = async (req, res) => {
   }
 };
 
+export const getType = async (req, res) => {
+  try {
+    const respData = await deviceService.listType();
+    res.json(respData);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ statusCode: "500", message: "Internal Server Error" });
+  }
+};
+
 export const getByStation = async (req, res) => {
   try {
     const {

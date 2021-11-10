@@ -9,7 +9,7 @@ export default async ({ body, deviceId, files, user_id }) => {
     device.id = deviceId;
 
     // console.log("user", user_id);
-    // console.log("Body .... ", body);
+    console.log("Body .... ", body);
     // console.log("FIles", files);
 
     device.set("updatedBy", user_id);
@@ -39,6 +39,11 @@ export default async ({ body, deviceId, files, user_id }) => {
             deviceTempId
           );
           device.set(key, templateObj);
+          break;
+        case "type":
+          const deviceTypeId = JSON.parse(value).objectId;
+          const typeObj = await new Parse.Query("DeviceType").get(deviceTypeId);
+          device.set(key, typeObj);
           break;
         case "installation_date":
           device.set(key, new Date(value));
