@@ -2,8 +2,8 @@ import Parse from "../../configs/parse-iot";
 
 export default async ({ user_id, query }) => {
   try {
-    console.log("LIST PROJECT ", user_id);
-    console.log("list project query", query);
+    // console.log("LIST PROJECT ", user_id);
+    // console.log("list project query", query);
     // const projectQuery = new Parse.Query("Project");
     const adminQuery = new Parse.Query("Project").equalTo("admin", user_id);
     const managerQuery = new Parse.Query("Project").equalTo("manager", user_id);

@@ -34,7 +34,7 @@ export default async ({ stationId, query }) => {
       .equalTo("isActive", true)
       .equalTo("isDeleted", false)
       .equalTo("station", stationObj)
-      .include(["station", "template"])
+      .include(["station", "template","type"])
       .withCount()
       .descending("installation_date")
       .find();

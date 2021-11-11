@@ -45,6 +45,11 @@ export default async ({ body, stationId, files, user_id }) => {
           );
           device.set(key, templateObj);
           break;
+        case "type":
+          const deviceTypeId = JSON.parse(value).objectId;
+          const typeObj = await new Parse.Query("DeviceType").get(deviceTypeId);
+          device.set(key, typeObj);
+          break;
         case "installation_date":
           device.set(key, new Date(value));
           break;
