@@ -4,11 +4,21 @@ import { io } from "../../index";
 import axois from "axios";
 import { format } from "date-fns";
 import th from "date-fns/locale/th";
+import { createClient } from "node-impala";
+import { create } from "../device";
+
+const client = createClient();
+
+client.connect({
+  host: "127.0.0.1",
+  port: 21000,
+  resultType: "json-array",
+});
 
 const deviceValue = async () => {
   try {
-    mqttClient.on("connect", () => {
-      console.log("Conneted");
+    mqttClient.on("connect", (c) => {
+      console.log("Conneted", c);
       mqttClient.subscribe("iot", (err) => {
         if (err) {
           console.log(err);
@@ -16,24 +26,25 @@ const deviceValue = async () => {
       });
       mqttClient.on("message", async (topic, message) => {
         const valueDevice = JSON.parse(message);
-        const device = await getDeviceId(valueDevice.deviceId);
+        console.log("VVVVV", valueDevice);
+        const device = await getDeviceId(valueDevice.code);
         if (device) {
-          delete valueDevice["deviceId"];
+          delete valueDevice["code"];
           const payload = {
-            deviceId: device.attributes.deviceId,
+            code: device.attributes.code,
             createdAt: new Date().toISOString(),
             value: {
               ...valueDevice,
             },
           };
-          io.emit(`iot/${device.attributes.deviceId}`, payload);
+          io.emit(`iot/${device.attributes.code}`, payload);
           io.emit(`iot`, payload);
           updateDeviceValue(
             { ...device.get("value"), ...valueDevice },
             device.id
           );
           const history = await createHistorty(valueDevice, device);
-
+          const historyImpala = await insertImpala(valueDevice, device);
           for (const [key, value] of Object.entries(valueDevice)) {
             getParameterAndCreateNotification({ device, history, value, key });
           }
@@ -45,25 +56,33 @@ const deviceValue = async () => {
   }
 };
 
-const getDeviceId = async (deviceId) => {
+const getDeviceId = async (code) => {
   const deviceQuery = new Parse.Query("Device");
-  deviceQuery.equalTo("deviceId", deviceId);
+  deviceQuery.equalTo("code", code);
   const resp = await deviceQuery.first();
   return resp;
 };
 
-const updateDeviceValue = async (payload, deviceId) => {
-  const deviceQuery = await new Parse.Query("Device").get(deviceId);
-  deviceQuery.set("value", payload);
+const updateDeviceValue = async (payload, code) => {
+  const deviceQuery = await new Parse.Query("Device").get(code);
+  let tempValue = deviceQuery.get("value");
+  Object.entries(payload).map(([key, value]) => {
+    tempValue[key] = value;
+  });
+  deviceQuery.set("value", tempValue);
   return deviceQuery.save();
 };
 
-const createHistorty = async (payload, deviceId) => {
+const createHistorty = async (payload, code) => {
   const historyObject = Parse.Object.extend("History");
   let history = new historyObject();
   history.set("value", payload);
-  history.set("device", deviceId);
+  history.set("device", code);
   return await history.save();
+};
+
+const insertImpala = (x, y) => {
+  console.log(x, y);
 };
 
 const getParameterAndCreateNotification = async ({
@@ -150,6 +169,7 @@ const createNotification = ({ device, history, findAlert, results }) => {
 
 const notificaitonSocket = async ({ device, newNotification }) => {
   try {
+    console.log(":::", newNotification);
     io.emit(`noti`, newNotification);
     device.set("isNotification", true);
     const params = new URLSearchParams();
@@ -161,19 +181,14 @@ const notificaitonSocket = async ({ device, newNotification }) => {
         {
           locale: th,
         }
-      )}\r\nสถานี ${newNotification.attributes.device.attributes.deviceId}  ${
+      )}\r\vอุปกรณ์ ${newNotification.attributes.device.attributes.name}  ${
         newNotification.attributes.device.attributes.description
-      }\r\n${
-        newNotification.attributes.parameter.attributes.nameTh
-      } มีปริมาณสูงถึง ${
+      }\r\n${newNotification.attributes.parameter.attributes.nameTh} มีค่า ${
         newNotification.attributes.history.attributes.value[
           newNotification.attributes.parameter.attributes.key
         ]
-      } ${
-        newNotification.attributes.parameter.attributes.unit
-      }\r\nอยู่ในเกณฑ์ ${
-        newNotification.attributes.index.index === 4 ? "🟠" : "🔴"
-      } ${newNotification.attributes.index.name}`
+      } ${newNotification.attributes.parameter.attributes.unit}\r\nอยู่ในเกณฑ์ 
+       ${newNotification.attributes.index.name}`
     );
     // \r\n
     const config = {
