@@ -11,7 +11,7 @@ import socketIO from "socket.io";
 import swagger from "./swagger.json";
 
 // mqttPublish();
-// mqttSubscribe();
+mqttSubscribe();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
