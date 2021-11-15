@@ -15,11 +15,10 @@ client.connect({
   resultType: "json-array",
 });
 
-const deviceValue = async () => {
+const mqttServer = async () => {
   try {
     server.on("clientConnected", async (client) => {
-      console.log("Client Connected:", client.id);
-
+      //   console.log("Client Connected:", client.id);
       const findDevice = await new Parse.Query("Device")
         .equalTo("device_token", client.id)
         .first();
@@ -30,6 +29,13 @@ const deviceValue = async () => {
         const deviceQuery = await new Parse.Query("Device").get(findDevice.id);
         deviceQuery.set("isOnline", true);
         await deviceQuery.save();
+
+        const payload = {
+          code: device.attributes.code,
+          createdAt: new Date().toISOString(),
+          isOnline: true,
+        };
+        io.emit(`iot/${deviceQuery.attributes.code}`, payload);
       }
     });
     server.on("clientDisconnected", async (client) => {
@@ -42,13 +48,18 @@ const deviceValue = async () => {
         const deviceQuery = await new Parse.Query("Device").get(findDevice.id);
         deviceQuery.set("isOnline", false);
         await deviceQuery.save();
+        const payload = {
+          code: device.attributes.code,
+          createdAt: new Date().toISOString(),
+          isOnline: false,
+        };
+        io.emit(`iot/${deviceQuery.attributes.code}`, payload);
       }
     });
     server.on("published", async (packet, client) => {
       if (packet.qos) {
         const valueDevice = JSON.parse(packet.payload.toString());
         const device = await getDeviceId(packet.topic);
-        console.log("device :", device);
         if (device) {
           delete valueDevice["code"];
           const payload = {
@@ -226,4 +237,4 @@ const notificaitonSocket = async ({ device, newNotification }) => {
   }
 };
 
-export default deviceValue;
+export default mqttServer;

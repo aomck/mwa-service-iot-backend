@@ -6,12 +6,13 @@ import morgan from "morgan";
 import route from "./route";
 import "dotenv/config";
 import { checkUser } from "./middlewares";
-import { mqttPublish, mqttSubscribe } from "./services/mqtt";
+import { mqttPublish, mqttSubscribe, mqttServer } from "./services/mqtt";
 import socketIO from "socket.io";
 import swagger from "./swagger.json";
 
 // mqttPublish();
-mqttSubscribe();
+// mqttSubscribe();
+mqttServer();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
