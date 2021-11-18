@@ -9,16 +9,10 @@ export default async ({ deviceId, query }) => {
     historyQuery.limit(await historyQuery.count());
 
     query?.startDate &&
-      historyQuery.greaterThanOrEqualTo(
-        "createdAt",
-        new Date(parseInt(query.startDate))
-      );
+      historyQuery.greaterThanOrEqualTo("createdAt", new Date(query.startDate));
 
     query?.endDate &&
-      historyQuery.lessThanOrEqualTo(
-        "createdAt",
-        new Date(parseInt(query.endDate))
-      );
+      historyQuery.lessThanOrEqualTo("createdAt", new Date(query.endDate));
 
     historyQuery.equalTo("device", {
       __type: "Pointer",

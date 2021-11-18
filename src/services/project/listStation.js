@@ -19,10 +19,10 @@ export default async ({ user_id, query }) => {
       tagQuery.matches("tag", query.search);
       let searchQuery = Parse.Query.or(codeQuery, nameQuery, tagQuery);
       allQuery = Parse.Query.and(searchQuery, roleQuery);
-    }else{
+    } else {
       allQuery = roleQuery;
     }
-    
+
     const projectResult = await allQuery
       .equalTo("isDeleted", false)
       .equalTo("isActive", true)

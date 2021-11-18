@@ -64,6 +64,7 @@ const mqttServer = async () => {
     });
     server.on("published", async (packet, client) => {
       if (packet.qos) {
+        console.log("Published :: ", packet);
         const valueDevice = JSON.parse(packet.payload.toString());
         const device = await getDeviceId(packet.topic);
         if (device) {
@@ -76,7 +77,7 @@ const mqttServer = async () => {
             },
           };
           io.emit(`iot/${device.attributes.station.get("code")}`, payload);
-          io.emit(`iot`, payload);
+          // io.emit(`iot`, payload);
           updateDeviceValue(
             { ...device.get("value"), ...valueDevice },
             device.id
@@ -108,6 +109,7 @@ const updateDeviceValue = async (payload, code) => {
     tempValue[key] = value;
   });
   deviceQuery.set("value", tempValue);
+  deviceQuery.set("lasttime_data", new Date());
   return deviceQuery.save();
 };
 
