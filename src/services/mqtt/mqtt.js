@@ -64,9 +64,9 @@ const mqttServer = async () => {
     });
     server.on("published", async (packet, client) => {
       if (packet.qos) {
-        console.log("Published :: ", packet);
+        console.log("Published :: ", client.id);
         const valueDevice = JSON.parse(packet.payload.toString());
-        const device = await getDeviceId(packet.topic);
+        const device = await getDeviceId(packet.topic, client.id);
         if (device) {
           delete valueDevice["code"];
           const payload = {
@@ -95,9 +95,9 @@ const mqttServer = async () => {
   }
 };
 
-const getDeviceId = async (code) => {
+const getDeviceId = async (code, token) => {
   const deviceQuery = new Parse.Query("Device");
-  deviceQuery.equalTo("code", code);
+  deviceQuery.equalTo("code", code).equalTo("device_token", token);
   const resp = await deviceQuery.include(["station"]).first();
   return resp;
 };
