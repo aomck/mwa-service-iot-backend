@@ -26,16 +26,19 @@ const mqttServer = async () => {
       if (!findDevice) {
         client.close();
       } else {
-        const deviceQuery = await new Parse.Query("Device").get(findDevice.id);
+        const deviceQuery = await new Parse.Query("Device")
+          .include(["station"])
+          .get(findDevice.id);
         deviceQuery.set("isOnline", true);
         await deviceQuery.save();
-
         const payload = {
-          code: device.attributes.code,
+          code: deviceQuery.attributes.code,
           createdAt: new Date().toISOString(),
           isOnline: true,
         };
-        io.emit(`iot/${deviceQuery.attributes.code}`, payload);
+        io.emit(`iot/${deviceQuery.attributes.station.get("code")}`, payload);
+        //io.emit(`iot/${deviceQuery.attributes.code}`, payload);
+        // io.emit(`iot`, payload);
       }
     });
     server.on("clientDisconnected", async (client) => {
@@ -45,15 +48,18 @@ const mqttServer = async () => {
       if (!findDevice) {
         client.close();
       } else {
-        const deviceQuery = await new Parse.Query("Device").get(findDevice.id);
+        const deviceQuery = await new Parse.Query("Device")
+          .include(["station"])
+          .get(findDevice.id);
         deviceQuery.set("isOnline", false);
         await deviceQuery.save();
         const payload = {
-          code: device.attributes.code,
+          code: deviceQuery.attributes.code,
           createdAt: new Date().toISOString(),
           isOnline: false,
         };
-        io.emit(`iot/${deviceQuery.attributes.code}`, payload);
+        io.emit(`iot/${deviceQuery.attributes.station.get("code")}`, payload);
+        // io.emit(`iot`, payload);
       }
     });
     server.on("published", async (packet, client) => {
@@ -69,7 +75,7 @@ const mqttServer = async () => {
               ...valueDevice,
             },
           };
-          io.emit(`iot/${device.attributes.code}`, payload);
+          io.emit(`iot/${device.attributes.station.get("code")}`, payload);
           io.emit(`iot`, payload);
           updateDeviceValue(
             { ...device.get("value"), ...valueDevice },
@@ -91,7 +97,7 @@ const mqttServer = async () => {
 const getDeviceId = async (code) => {
   const deviceQuery = new Parse.Query("Device");
   deviceQuery.equalTo("code", code);
-  const resp = await deviceQuery.first();
+  const resp = await deviceQuery.include(["station"]).first();
   return resp;
 };
 
