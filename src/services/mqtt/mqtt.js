@@ -63,7 +63,7 @@ const mqttServer = async () => {
       }
     });
     server.on("published", async (packet, client) => {
-      if (packet.qos) {
+      if (client) {
         console.log("Published :: ", client.id);
         const valueDevice = JSON.parse(packet.payload.toString());
         const device = await getDeviceId(packet.topic, client.id);
