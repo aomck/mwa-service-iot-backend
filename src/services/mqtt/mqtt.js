@@ -63,7 +63,7 @@ const mqttServer = async () => {
       }
     });
     server.on("published", async (packet, client) => {
-      if (packet.qos) {
+      if (client) {
         console.log("Published :: ", client.id);
         const valueDevice = JSON.parse(packet.payload.toString());
         const device = await getDeviceId(packet.topic, client.id);
@@ -71,6 +71,7 @@ const mqttServer = async () => {
           delete valueDevice["code"];
           const payload = {
             code: device.attributes.code,
+            deviceId: device.id,
             createdAt: new Date().toISOString(),
             value: {
               ...valueDevice,
@@ -196,7 +197,7 @@ const getParameterAndCreateNotification = async ({
     });
 };
 
-const createNotification = ({ device, history, findAlert, results }) => {
+const createNotification = async ({ device, history, findAlert, results }) => {
   const notificationObject = Parse.Object.extend("Notification");
   let notification = new notificationObject();
   notification.set("device", device);
@@ -204,6 +205,16 @@ const createNotification = ({ device, history, findAlert, results }) => {
   notification.set("index", findAlert);
   notification.set("parameter", results);
   notification.set("isShow", true);
+  const respData = await notification.save();
+
+  const payload = {
+    code: device.attributes.code,
+    deviceId: device.id,
+    notification: true,
+    value: respData,
+  };
+
+  io.emit(`iot/${device.attributes.station.get("code")}`, payload);
   return notification.save();
 };
 
