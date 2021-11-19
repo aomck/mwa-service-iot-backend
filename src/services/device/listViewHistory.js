@@ -8,6 +8,11 @@ export default async ({ deviceId, query }) => {
     historyQuery.select("value");
     historyQuery.limit(await historyQuery.count());
 
+    console.log(
+      "  new Date(parseInt(query.startDate)) ::",
+      new Date(parseInt(query.startDate))
+    );
+
     query?.startDate &&
       historyQuery.greaterThanOrEqualTo(
         "createdAt",
