@@ -18,7 +18,7 @@ client.connect({
 const mqttServer = async () => {
   try {
     server.on("clientConnected", async (client) => {
-      //   console.log("Client Connected:", client.id);
+      console.log("Client Connected:", client.id);
       const findDevice = await new Parse.Query("Device")
         .equalTo("device_token", client.id)
         .first();
@@ -42,6 +42,7 @@ const mqttServer = async () => {
       }
     });
     server.on("clientDisconnected", async (client) => {
+      console.log("Client DisConnected:", client.id);
       const findDevice = await new Parse.Query("Device")
         .equalTo("device_token", client.id)
         .first();
