@@ -1,0 +1,10 @@
+{
+  "vsmqtt.brokerProfiles": [
+    {
+      "name": "IoT Local",
+      "host": "localhost:7000",
+      "port": 1883,
+      "clientId": "e2358bf7-d07d-458a-8715-7714c096b0e9"
+    }
+  ]
+}

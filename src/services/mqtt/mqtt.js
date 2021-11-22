@@ -106,10 +106,22 @@ const getDeviceId = async (code, token) => {
 
 const updateDeviceValue = async (payload, code) => {
   const deviceQuery = await new Parse.Query("Device").get(code);
-  let tempValue = deviceQuery.get("value");
-  Object.entries(payload).map(([key, value]) => {
-    tempValue[key] = value;
-  });
+  let tempValue = {};
+  // tempValue = deviceQuery.get("value");
+  console.log("TEMP", tempValue);
+  if (tempValue) {
+    Object.entries(payload).map(([key, value]) => {
+      // console.log("und ", key, value);
+      tempValue[key] = value;
+    });
+  } else {
+    tempValue = {};
+    Object.entries(payload).map(([key, value]) => {
+      // console.log("def ", key, value);
+      tempValue[key] = value;
+    });
+  }
+
   deviceQuery.set("value", tempValue);
   deviceQuery.set("lasttime_data", new Date());
   return deviceQuery.save();
