@@ -9,10 +9,12 @@ import { checkUser } from "./middlewares";
 import { mqttPublish, mqttSubscribe, mqttServer } from "./services/mqtt";
 import socketIO from "socket.io";
 import swagger from "./swagger.json";
+import { getDataInterval } from "./services/lora";
 
 // mqttPublish();
 // mqttSubscribe();
 mqttServer();
+// getDataInterval();
 
 const app = express();
 const PORT = process.env.PORT || 8000;

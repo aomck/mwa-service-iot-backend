@@ -1,0 +1,7 @@
+{
+  "lora_gateway": {
+    "api": "https://iot.maholan.app/api/apis/lora",
+    "lora_id": "d_006",
+    "lora_token": "4fea9bc2-06b1-482c-9a96-6631d3b03b28"
+  }
+}

@@ -8,3 +8,4 @@ export * as userService from './user';
 export * as roleService from './role';
 export * as unitService from './unit';
 export * as deviceTemplateService from './device-template';
+export * as loraService from './lora'

@@ -6,6 +6,7 @@ import checkCommittee from "./checkRole/checkCommittee";
 import checkInspector from "./checkRole/checkInspector";
 import checkStaff from "./checkRole/checkStaff";
 import checkCia from "./checkRole/checkCia";
+import checkLora from "./lora/checkLora"
 
 export {
   logger,
