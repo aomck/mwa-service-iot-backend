@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import morgan from "morgan";
 import route from "./route";
+import lora from "./route/lora";
 import "dotenv/config";
 import { checkUser } from "./middlewares";
 import { mqttPublish, mqttSubscribe, mqttServer } from "./services/mqtt";
@@ -14,7 +15,7 @@ import { getDataInterval } from "./services/lora";
 // mqttPublish();
 // mqttSubscribe();
 mqttServer();
-// getDataInterval();
+getDataInterval();
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -59,6 +60,7 @@ app.get("/api/swagger", (req, res) => {
 });
 
 app.use("/apis", checkUser, route);
+app.use("/lora-api", lora);
 
 server.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);
