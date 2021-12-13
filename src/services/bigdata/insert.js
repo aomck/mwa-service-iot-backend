@@ -7,15 +7,19 @@ export default async (device_code, data) => {
     column.push(key);
     values.push(value);
   });
-  console.log(
-    `INSERT INTO pulsation (device_code,${column.join()}) VALUES (${device_code},${values.join()})`
-  );
-  //   const python = spawn("C:/Users/Acer/Anaconda3/envs/isoc/python", [
-  //     "script_impyla.py",
-  //     "10.147.254.162",
-  //     "21050",
-  //     "show databases",
-  //     "user",
-  //     "password",
-  //   ]);
+  
+  var query =  `INSERT INTO ll_mwa_iot.pulsation (device_code,${column.join()}) VALUES ('${device_code}',${values.join()})`;
+  if(process.env.BIGDATA==="True"){
+    console.log(query)
+    const python = spawn(process.env.PYTHON_PATH, [
+      "script_impyla.py",
+      process.env.IMPALA_ADDRESS,
+      process.env.IMPALA_PORT,
+      query,
+      process.env.IMPALA_USERNAME,
+      process.env.IMPALA_PASSWORD,
+    ]);
+    // console.log("======",python)
+  }
+  
 };

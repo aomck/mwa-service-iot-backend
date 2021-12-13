@@ -60,7 +60,7 @@ const getLoRaDeviceValue = async () => {
         const resultSave = await loraObj.save();
         // console.log("---->", resultSave);
       });
-    }, parseInt(10000)); //process.env.LORA_INTERVAL
+    }, parseInt(3000)); //process.env.LORA_INTERVAL
   } catch (error) {
     console.log("error");
   }
