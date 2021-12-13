@@ -71,10 +71,11 @@ const mqttServer = async () => {
         const device = await getDeviceId(packet.topic, client.id);
         if (device) {
           delete valueDevice["code"];
+          const datetime = new Date().toISOString();
           const payload = {
             code: device.attributes.code,
             deviceId: device.id,
-            createdAt: new Date().toISOString(),
+            createdAt: datetime,
             value: {
               ...valueDevice,
             },
@@ -86,10 +87,11 @@ const mqttServer = async () => {
             device.id
           );
           const history = await createHistorty(valueDevice, device);
-          const historyImpala = await insert(
-            device.attributes.code,
-            ...valueDevice
-          );
+          insert(device.attributes.code, datetime, ...valueDevice);
+          // const historyImpala = await insert(
+          //   device.attributes.code,
+          //   ...valueDevice
+          // );
           for (const [key, value] of Object.entries(valueDevice)) {
             getParameterAndCreateNotification({ device, history, value, key });
           }

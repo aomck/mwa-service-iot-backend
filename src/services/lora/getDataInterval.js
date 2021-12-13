@@ -38,15 +38,16 @@ const getLoRaDeviceValue = async () => {
         const loraObj = await LoraDeviceQuery.first();
         if (LoraResult.data.isOnline === true) {
           // console.log("ONLINE >>>>>>> >>>");
+          const datetime = new Date().toISOString();
           const payload = {
             code: loraObj.attributes.code,
-            createdAt: new Date().toISOString(),
+            createdAt: datetime,
             isOnline: true,
           };
 
           loraObj.set("isOnline", true);
           loraObj.set("value", LoraResult.data.value);
-          insert(loraObj.attributes.code, LoraResult.data.value);
+          insert(loraObj.attributes.code, datetime, LoraResult.data.value);
           io.emit(`iot/${loraObj.attributes.station.get("code")}`, payload);
         } else {
           const payload = {
@@ -60,7 +61,7 @@ const getLoRaDeviceValue = async () => {
         const resultSave = await loraObj.save();
         // console.log("---->", resultSave);
       });
-    }, parseInt(3000)); //process.env.LORA_INTERVAL
+    }, parseInt(process.env.LORA_INTERVAL)); //process.env.LORA_INTERVAL
   } catch (error) {
     console.log("error");
   }
