@@ -11,11 +11,13 @@ import { mqttPublish, mqttSubscribe, mqttServer } from "./services/mqtt";
 import socketIO from "socket.io";
 import swagger from "./swagger.json";
 import { getDataInterval } from "./services/lora";
+import { insert } from "./services/bigdata";
 
 // mqttPublish();
 // mqttSubscribe();
 mqttServer();
-getDataInterval();
+// getDataInterval();
+insert("d_006", { suction_time: 20, flush_time: 60 });
 
 const app = express();
 const PORT = process.env.PORT || 8000;
