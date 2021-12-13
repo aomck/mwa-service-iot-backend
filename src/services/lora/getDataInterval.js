@@ -1,6 +1,7 @@
 import Parse from "../../configs/parse-iot";
 import axios from "axios";
 import { io } from "../../index";
+import { insert } from "../bigdata";
 
 const getLoRaDeviceValue = async () => {
   try {
@@ -45,6 +46,7 @@ const getLoRaDeviceValue = async () => {
 
           loraObj.set("isOnline", true);
           loraObj.set("value", LoraResult.data.value);
+          insert(loraObj.attributes.code, LoraResult.data.value);
           io.emit(`iot/${loraObj.attributes.station.get("code")}`, payload);
         } else {
           const payload = {

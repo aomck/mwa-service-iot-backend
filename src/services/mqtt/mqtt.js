@@ -5,6 +5,7 @@ import axois from "axios";
 import { format } from "date-fns";
 import th from "date-fns/locale/th";
 import { createClient } from "node-impala";
+import { insert } from "../bigdata/index";
 import { create } from "../device";
 
 const client = createClient();
@@ -85,7 +86,10 @@ const mqttServer = async () => {
             device.id
           );
           const history = await createHistorty(valueDevice, device);
-          const historyImpala = await insertImpala(valueDevice, device);
+          const historyImpala = await insert(
+            device.attributes.code,
+            ...valueDevice
+          );
           for (const [key, value] of Object.entries(valueDevice)) {
             getParameterAndCreateNotification({ device, history, value, key });
           }
