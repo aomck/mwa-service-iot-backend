@@ -16,7 +16,7 @@ import { insert } from "./services/bigdata";
 // mqttPublish();
 // mqttSubscribe();
 mqttServer();
-getDataInterval();
+// getDataInterval();
 // insert("d_006", { suction_time: 20, flush_time: 60 });
 
 const app = express();

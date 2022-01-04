@@ -56,6 +56,9 @@ export default async ({ body, stationId, files, user_id }) => {
         case "position":
           device.set(key, JSON.parse(value));
           break;
+        case "config":
+          device.set(key, JSON.parse(value));
+          break;
         default:
           device.set(key, value);
           break;

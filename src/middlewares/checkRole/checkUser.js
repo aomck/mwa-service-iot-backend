@@ -16,11 +16,14 @@ const listRole = [
 export default async (req, res, next) => {
   try {
     const session = req.headers["session_token"];
-    session ||
-      res.status(401).json({
+
+    if (!session) {
+      return res.status(401).json({
         status: 401,
         message: "unauthorized",
       });
+    }
+
     // console.log("SESSION chekuser ", session);
     let result = await axios.get(CLIENT_API + "/apis/checkroleobj", {
       headers: {
@@ -37,7 +40,7 @@ export default async (req, res, next) => {
         next();
         break;
       } else if (i + 1 === result.data.roles.length) {
-        res.status(401).json({
+        return res.status(401).json({
           status: 401,
           message: "unauthorized",
         });
