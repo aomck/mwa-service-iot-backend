@@ -31,7 +31,7 @@ export const create = async (req, res) => {
     await parameterService.create({ body, files, user_id });
     res.status(201).json({
       success: true,
-      message: "project has been created successfully",
+      message: "parameter has been created successfully",
     });
   } catch (error) {
     res

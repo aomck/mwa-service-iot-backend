@@ -17,6 +17,7 @@ export default async ({ query }) => {
     const findDeviceTemplate = await queryDevice
       .equalTo('isDeleted', false)
       .equalTo('isActive', true)
+      .descending("createdAt")
       .find();
     const listDeviceTemplate = await Promise.all(
       findDeviceTemplate.map(async (devicetemplate) => {

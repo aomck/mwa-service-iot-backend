@@ -1,60 +1,58 @@
 import Parse from "../../configs/parse-iot";
 import parseUploadFile from "../../helpers/parse_upload_file";
 
-export default async ({ body, file, user_id }) => {
+export default async ({ body,files, user_id }) => {
   try {
-    const projectObj = Parse.Object.extend("Project");
-    const project = new projectObj();
+    // console.log("parameter ID ===> ", parameterId);
+    // console.log("Body ===> ", body);
+    // console.log("FILE ===> ", files);
+    const parameterObj = Parse.Object.extend("Parameter");
+    const parameter = new parameterObj();
+    parameter.set("updatedBy", user_id);
+    parameter.set("createdBy", user_id);
 
-    project.set("createdBy", user_id);
-    project.set("updatedBy", user_id);
-
-    if (file?.fieldname && file.fieldname === "icon") {
-      project.set("icon", await parseUploadFile({ file }));
+    if (files && files.length > 0) {
+      files.map(async (file) => {
+        parameter.set(file.originalname, await parseUploadFile({ file }));
+      });
     }
 
     for await (const [key, value] of Object.entries(body)) {
       switch (key) {
         case "isActive":
-          project.set(key, value === "true" ? true : false);
+          parameter.set(key, value === "true" ? true : false);
+          break;
+        case "isNotification":
+          parameter.set(key, value === "true" ? true : false);
           break;
         case "tag":
           if (value === "") {
-            project.set(key, []);
+            parameter.set(key, []);
           } else {
-            project.set(key, value.split(","));
+            parameter.set(key, value.split(","));
           }
           break;
-        case "admin":
-          if (value === "") {
-            project.set(key, []);
-          } else {
-            // console.log(">>>>>>>", value.split(",").push(user_id));
-            let admin = value.split(",");
-            admin.push(user_id);
-            console.log("TYPE", typeof admin, typeof xxx);
-            project.set(key, admin);
-          }
+        case "min":
+          parameter.set(key, parseInt(value));
           break;
-        case "manager":
-          if (value === "") {
-            project.set(key, []);
-          } else {
-            project.set(key, value.split(","));
-          }
+        case "max":
+          parameter.set(key, parseInt(value));
           break;
-        case "viewer":
-          if (value === "") {
-            project.set(key, []);
-          } else {
-            project.set(key, value.split(","));
-          }
+        case "display":
+          const displayObj = new Parse.Object("DisplayType");
+          displayObj.id = JSON.parse(value).objectId;
+          // console.log(displayObj);
+          parameter.set(key, displayObj);
+          break;
+        case "index":
+          parameter.set(key, JSON.parse(value));
           break;
         default:
-          project.set(key, value);
+          parameter.set(key, value);
+          break;
       }
     }
-    return await project.save();
+    return await parameter.save();
   } catch (error) {
     console.log("error", error);
   }

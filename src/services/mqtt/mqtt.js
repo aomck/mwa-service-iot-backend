@@ -66,40 +66,49 @@ const mqttServer = async () => {
     });
     server.on("published", async (packet, client) => {
       if (client) {
-        console.log("Published :: ", client.id);
-        const valueDevice = JSON.parse(packet.payload.toString());
-        const device = await getDeviceId(packet.topic, client.id);
-        if (device) {
-          delete valueDevice["code"];
-          const datetime = new Date().toISOString();
-          const payload = {
-            code: device.attributes.code,
-            deviceId: device.id,
-            createdAt: datetime,
-            value: {
-              ...valueDevice,
-            },
-          };
-          io.emit(`iot/${device.attributes.station.get("code")}`, payload);
-          // io.emit(`iot`, payload);
-          updateDeviceValue(
-            { ...device.get("value"), ...valueDevice },
-            device.id
-          );
-          const history = await createHistorty(valueDevice, device);
-          insert(device.attributes.code, datetime, ...valueDevice);
-          // const historyImpala = await insert(
-          //   device.attributes.code,
-          //   ...valueDevice
-          // );
-          for (const [key, value] of Object.entries(valueDevice)) {
-            getParameterAndCreateNotification({ device, history, value, key });
+        console.log("Published :: ", client.id, packet.payload.toString());
+        try {
+          const valueDevice = JSON.parse(packet.payload.toString());
+          const device = await getDeviceId(packet.topic, client.id);
+          if (device) {
+            delete valueDevice["code"];
+            const datetime = new Date().toISOString();
+            const payload = {
+              code: device.attributes.code,
+              deviceId: device.id,
+              createdAt: datetime,
+              value: {
+                ...valueDevice,
+              },
+            };
+            io.emit(`iot/${device.attributes.station.get("code")}`, payload);
+            // io.emit(`iot`, payload);
+            updateDeviceValue(
+              { ...device.get("value"), ...valueDevice },
+              device.id
+            );
+            const history = await createHistorty(valueDevice, device);
+            // insert(device.attributes.code, datetime, ...valueDevice);
+            // const historyImpala = await insert(
+            //   device.attributes.code,
+            //   ...valueDevice
+            // );
+            for (const [key, value] of Object.entries(valueDevice)) {
+              getParameterAndCreateNotification({
+                device,
+                history,
+                value,
+                key,
+              });
+            }
           }
+        } catch (error) {
+          console.log("error JSON format ", error);
         }
       }
     });
   } catch (error) {
-    console.log("error", error);
+    console.log("error Device Connection", error);
   }
 };
 
@@ -114,21 +123,21 @@ const updateDeviceValue = async (payload, code) => {
   const deviceQuery = await new Parse.Query("Device").get(code);
   let tempValue = {};
   // tempValue = deviceQuery.get("value");
-  console.log("TEMP", tempValue);
-  if (tempValue) {
-    Object.entries(payload).map(([key, value]) => {
-      // console.log("und ", key, value);
-      tempValue[key] = value;
-    });
-  } else {
-    tempValue = {};
-    Object.entries(payload).map(([key, value]) => {
-      // console.log("def ", key, value);
-      tempValue[key] = value;
-    });
-  }
+  // console.log("TEMP", tempValue);
+  // if (tempValue) {
+  //   Object.entries(payload).map(([key, value]) => {
+  //     // console.log("und ", key, value);
+  //     tempValue[key] = value;
+  //   });
+  // } else {
+  //   tempValue = {};
+  //   Object.entries(payload).map(([key, value]) => {
+  //     // console.log("def ", key, value);
+  //     tempValue[key] = value;
+  //   });
+  // }
 
-  deviceQuery.set("value", tempValue);
+  deviceQuery.set("value", payload);
   deviceQuery.set("lasttime_data", new Date());
   return deviceQuery.save();
 };

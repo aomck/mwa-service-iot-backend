@@ -30,7 +30,7 @@ export default async ({ deviceId, query }) => {
       className: "Device",
       objectId: deviceId,
     });
-    const result = historyQuery.find();
+    const result = historyQuery.ascending("createdAt").find();
     return result;
   } catch (error) {
     console.log("error", error);
