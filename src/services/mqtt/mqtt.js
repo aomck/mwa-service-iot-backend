@@ -1,7 +1,7 @@
 import Parse from "../../configs/parse-iot";
 import server from "../../configs/mqtt";
 import { io } from "../../index";
-import axois from "axios";
+import axios from "axios";
 import { format } from "date-fns";
 import th from "date-fns/locale/th";
 import { createClient } from "node-impala";
@@ -249,6 +249,15 @@ const createNotification = async ({ device, history, findAlert, results }) => {
 const notificaitonSocket = async ({ device, newNotification }) => {
   try {
     console.log(":::", newNotification);
+    // console.log("Noti", newNotification);
+
+    const notiAdmin = device.attributes?.station?.get("admin");
+    const notiViewer = device.attributes?.station?.get("viewer");
+    const createdBy = device.attributes?.station?.get("createdBy");
+    const notiUser = [...notiAdmin, ...notiViewer];
+    notiUser.push(createdBy);
+    // console.log(":::", notiAdmin, notiViewer);
+    // console.log("Noti To ::: ", notiUser);
     io.emit(`noti`, newNotification);
     device.set("isNotification", true);
     const params = new URLSearchParams();
@@ -269,6 +278,36 @@ const notificaitonSocket = async ({ device, newNotification }) => {
       } ${newNotification.attributes.parameter.attributes.unit}\r\nอยู่ในเกณฑ์ 
        ${newNotification.attributes.index.name}`
     );
+    const mainNotiRes = await axios.post(
+      `${process.env.CLIENT_API}/apis/notification`,
+      {
+        system: "5ndjW8i898", 
+        units: [],
+        roles: [],
+        users: notiUser,
+        type: "zjMu2CPtGB", 
+        title: "ค่าพารามิเตอร์ไม่เป็นไปตามเกณฑ์",
+        message: `อุปกรณ์ ${newNotification.attributes.device.attributes.name}  ${
+          newNotification.attributes.device.attributes.description
+        }\r\n${newNotification.attributes.parameter.attributes.nameTh} มีค่า ${
+          newNotification.attributes.history.attributes.value[
+            newNotification.attributes.parameter.attributes.key
+          ]
+        } ${newNotification.attributes.parameter.attributes.unit}\r\nอยู่ในเกณฑ์
+           ${newNotification.attributes.index.name}`,
+        value:
+          newNotification.attributes.history.attributes.value[
+            newNotification.attributes.parameter.attributes.key
+          ],
+        param: newNotification.attributes.parameter.attributes.key,
+      },
+      {
+        headers: {
+          "system-token": "iot_token",
+        },
+      }
+    );
+    console.log("res ---- ", mainNotiRes);
     // \r\n
     const config = {
       headers: {
@@ -277,7 +316,7 @@ const notificaitonSocket = async ({ device, newNotification }) => {
       },
     };
 
-    await axois.post(`https://notify-api.line.me/api/notify`, params, config);
+    await axios.post(`https://notify-api.line.me/api/notify`, params, config);
     return await device.save();
   } catch (error) {
     console.log("error", error);
