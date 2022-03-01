@@ -28,8 +28,9 @@ export default async (device, newNotification) => {
         newNotification.attributes.history.attributes.value[
           newNotification.attributes.parameter.attributes.key
         ]
-      } ${newNotification.attributes.parameter.attributes.unit}\r\nอยู่ในเกณฑ์ 
-         ${newNotification.attributes.index.name}`
+      } ${
+        newNotification.attributes.parameter.attributes.unit
+      }\r\nอยู่ในเกณฑ์ ${newNotification.attributes.index.name}`
     );
     await axios.post(`https://notify-api.line.me/api/notify`, params, config);
   }
