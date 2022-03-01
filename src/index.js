@@ -5,8 +5,10 @@ import cors from "cors";
 import morgan from "morgan";
 import route from "./route";
 import lora from "./route/lora";
+import history from "./route/history";
 import "dotenv/config";
 import { checkUser } from "./middlewares";
+import { checkDevice } from "./middlewares";
 import { mqttPublish, mqttSubscribe, mqttServer } from "./services/mqtt";
 import socketIO from "socket.io";
 import swagger from "./swagger.json";
@@ -63,6 +65,7 @@ app.get("/api/swagger", (req, res) => {
 
 app.use("/apis", checkUser, route);
 app.use("/lora-api", lora);
+app.use("/history/:device_id", checkDevice, history);
 
 server.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);
