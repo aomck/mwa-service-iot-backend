@@ -1,4 +1,4 @@
-import Parse from "../../configs/parse-iot";
+import { io } from "../../index";
 import { createClient } from "node-impala";
 import {
   getDeviceId,
@@ -22,6 +22,22 @@ export default async ({ body, device_code, device_token }) => {
     const payload = JSON.parse(JSON.stringify(body));
     updateDeviceValue(payload, device);
     const history = await createHistorty(payload, device);
+    const datetime = new Date().toISOString();
+    const noti_payload = {
+      code: device.attributes.code,
+      deviceId: device.id,
+      createdAt: datetime,
+      value: {
+        ...payload,
+      },
+    };
+    console.log(
+      "station ... code ::: ",
+      device.attributes.station.get("code"),
+      noti_payload
+    );
+    io.emit(`iot/${device.attributes.station.get("code")}`, noti_payload);
+
     for (const [key, value] of Object.entries(payload)) {
       getParameterAndCreateNotification({
         device,

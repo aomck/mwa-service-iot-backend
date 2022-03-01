@@ -143,7 +143,7 @@ export const notificaitonSocket = async ({ device, newNotification }) => {
         },
       }
     );
-    console.log("res ---- ", mainNotiRes);
+    // console.log("res ---- ", mainNotiRes);
     await linenotify(device, newNotification);
     // \r\n
     return await device.save();

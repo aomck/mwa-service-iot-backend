@@ -308,7 +308,7 @@ const notificaitonSocket = async ({ device, newNotification }) => {
         },
       }
     );
-    console.log("res ---- ", mainNotiRes);
+    // console.log("res ---- ", mainNotiRes);
     // \r\n
     const config = {
       headers: {
