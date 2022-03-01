@@ -9,7 +9,6 @@ import "dotenv/config";
 import { checkUser } from "./middlewares";
 import { mqttPublish, mqttSubscribe, mqttServer } from "./services/mqtt";
 import socketIO from "socket.io";
-import swagger from "./swagger.json";
 import { getDataInterval } from "./services/lora";
 import { insert } from "./services/bigdata";
 
@@ -56,10 +55,6 @@ app.use(
 app.use(morgan("dev"));
 
 app.use(bodyParser.urlencoded({ extended: false }));
-
-app.get("/api/swagger", (req, res) => {
-  res.json(swagger);
-});
 
 app.use("/apis", checkUser, route);
 app.use("/lora-api", lora);
