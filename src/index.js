@@ -60,7 +60,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/apis", checkUser, route);
 app.use("/lora-api", lora);
-app.use("/history/:device_id", checkDevice, history);
+app.use("/history/:device_code", checkDevice, history);
 
 server.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);

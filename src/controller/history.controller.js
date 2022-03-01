@@ -2,13 +2,10 @@ import { historyService } from "../services";
 
 export const createHistory = async (req, res) => {
   try {
-    const {
-      body,
-      params: { device_id },
-      headers: { device_token },
-    } = req;
+    const { body, device_code, device_token } = req;
+    // console.log("xxxxxx", device_code;
     const respData = await historyService.create({
-      device_id,
+      device_code,
       device_token,
       body,
     });

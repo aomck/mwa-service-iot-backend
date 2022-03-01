@@ -12,12 +12,14 @@ export default async (req, res, next) => {
     // console.log("SESSION chekuser ", session);
     const deviceQuery = new Parse.Query("Device");
     // console.log("::::", req.params?.device_id);
-    deviceQuery.equalTo("code", req.params?.device_id);
+    deviceQuery.equalTo("code", req.params?.device_code);
     deviceQuery.equalTo("device_token", token);
     const result = await deviceQuery.find();
     if (result.length > 0) {
       // console.log("RES check device res", result);
       // console.log("........................");
+      req.device_code = req.params?.device_code;
+      req.device_token = token;
       next();
     } else {
       res.status(401).json({

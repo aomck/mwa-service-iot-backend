@@ -1,29 +1,24 @@
 import Parse from "../../configs/parse-iot";
-import { io } from "../../index";
-import axios from "axios";
-import { format } from "date-fns";
-import th from "date-fns/locale/th";
 
-const getDeviceId = async (code, token) => {
-    const deviceQuery = new Parse.Query("Device");
-    deviceQuery.equalTo("code", code).equalTo("device_token", token);
-    const resp = await deviceQuery.include(["station"]).first();
-    return resp;
-  };
+export const getDeviceId = async (code) => {
+  const deviceQuery = new Parse.Query("Device");
+  deviceQuery.equalTo("code", code);
+  const resp = await deviceQuery.include(["station"]).first();
+  return resp;
+};
 
-  const updateDeviceValue = async (payload, code) => {
-    const deviceQuery = await new Parse.Query("Device").get(code);
-  
-    deviceQuery.set("value", payload);
-    deviceQuery.set("lasttime_data", new Date());
-    return deviceQuery.save();
-  };
+export const updateDeviceValue = async (payload, device) => {
+  const old_value = device.get("value");
+  const new_value = { ...old_value, ...payload };
+  device.set("value", new_value);
+  device.set("lasttime_data", new Date());
+  return device.save();
+};
 
-  const createHistorty = async (payload, code) => {
-    const historyObject = Parse.Object.extend("History");
-    let history = new historyObject();
-    history.set("value", payload);
-    history.set("device", code);
-    return await history.save();
-  };
-  
+export const createHistorty = async (payload, device) => {
+  const historyObject = Parse.Object.extend("History");
+  let history = new historyObject();
+  history.set("value", payload);
+  history.set("device", device);
+  return history.save();
+};
