@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "title": "IoT Platform Data Service"
   },
-  "host": "bigdata.mwa.co.th/iot-api/apis",
+  "host": "iot-bigdata.mwa.co.th/api/apis",
   "basePath": "/",
   "tags": [
     {
@@ -121,6 +121,20 @@
             "in": "path",
             "description": "ID of Device to return",
             "required": true,
+            "type": "string"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "unix time",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "unix time",
+            "required": false,
             "type": "string"
           }
         ],

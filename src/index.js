@@ -13,6 +13,7 @@ import { mqttPublish, mqttSubscribe, mqttServer } from "./services/mqtt";
 import socketIO from "socket.io";
 import { getDataInterval } from "./services/lora";
 import { insert } from "./services/bigdata";
+import swagger from "./swagger.json";
 
 // mqttPublish();
 // mqttSubscribe();
@@ -61,6 +62,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/apis", checkUser, route);
 app.use("/lora-api", lora);
 app.use("/history/:device_code", checkDevice, history);
+app.get("/api/swagger", (req, res) => {
+  res.json(swagger);
+});
 
 server.listen(PORT, () => {
   console.log(`app listening on port ${PORT}`);
