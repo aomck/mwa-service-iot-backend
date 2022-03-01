@@ -16,97 +16,9 @@ client.connect({
   resultType: "json-array",
 });
 
-const mqttServer = async () => {
+export default async ({ body, device_id }) => {
   try {
-    server.on("clientConnected", async (client) => {
-      console.log("Client Connected:", client.id);
-      const findDevice = await new Parse.Query("Device")
-        .equalTo("device_token", client.id)
-        .first();
-
-      if (!findDevice) {
-        client.close();
-      } else {
-        const deviceQuery = await new Parse.Query("Device")
-          .include(["station"])
-          .get(findDevice.id);
-        deviceQuery.set("isOnline", true);
-        await deviceQuery.save();
-        const payload = {
-          code: deviceQuery.attributes.code,
-          createdAt: new Date().toISOString(),
-          isOnline: true,
-        };
-        io.emit(`iot/${deviceQuery.attributes.station.get("code")}`, payload);
-        //io.emit(`iot/${deviceQuery.attributes.code}`, payload);
-        // io.emit(`iot`, payload);
-      }
-    });
-    server.on("clientDisconnected", async (client) => {
-      console.log("Client DisConnected:", client.id);
-      const findDevice = await new Parse.Query("Device")
-        .equalTo("device_token", client.id)
-        .first();
-      if (!findDevice) {
-        client.close();
-      } else {
-        const deviceQuery = await new Parse.Query("Device")
-          .include(["station"])
-          .get(findDevice.id);
-        deviceQuery.set("isOnline", false);
-        await deviceQuery.save();
-        const payload = {
-          code: deviceQuery.attributes.code,
-          createdAt: new Date().toISOString(),
-          isOnline: false,
-        };
-        io.emit(`iot/${deviceQuery.attributes.station.get("code")}`, payload);
-        // io.emit(`iot`, payload);
-      }
-    });
-    server.on("published", async (packet, client) => {
-      if (client) {
-        console.log("Published :: ", client.id, packet.payload.toString());
-        try {
-          const valueDevice = JSON.parse(packet.payload.toString());
-          const device = await getDeviceId(packet.topic, client.id);
-          if (device) {
-            delete valueDevice["code"];
-            const datetime = new Date().toISOString();
-            const payload = {
-              code: device.attributes.code,
-              deviceId: device.id,
-              createdAt: datetime,
-              value: {
-                ...valueDevice,
-              },
-            };
-            io.emit(`iot/${device.attributes.station.get("code")}`, payload);
-            // io.emit(`iot`, payload);
-            updateDeviceValue(
-              { ...device.get("value"), ...valueDevice },
-              device.id
-            );
-            const history = await createHistorty(valueDevice, device);
-            // insert(device.attributes.code, datetime, ...valueDevice);
-            // const historyImpala = await insert(
-            //   device.attributes.code,
-            //   ...valueDevice
-            // );
-            for (const [key, value] of Object.entries(valueDevice)) {
-              getParameterAndCreateNotification({
-                device,
-                history,
-                value,
-                key,
-              });
-            }
-          }
-        } catch (error) {
-          console.log("error JSON format ", error);
-        }
-      }
-    });
+    console.log("Hist....", device_id, body);
   } catch (error) {
     console.log("error Device Connection", error);
   }
@@ -281,16 +193,18 @@ const notificaitonSocket = async ({ device, newNotification }) => {
     const mainNotiRes = await axios.post(
       `${process.env.CLIENT_API}/apis/notification`,
       {
-        system: "5ndjW8i898", 
-        
+        system: "5ndjW8i898",
+
         units: [],
         roles: [],
         users: notiUser,
-        type: "zjMu2CPtGB", 
+        type: "zjMu2CPtGB",
         title: "ค่าพารามิเตอร์ไม่เป็นไปตามเกณฑ์",
-        message: `อุปกรณ์ ${newNotification.attributes.device.attributes.name}  ${
-          newNotification.attributes.device.attributes.description
-        }\r\n${newNotification.attributes.parameter.attributes.nameTh} มีค่า ${
+        message: `อุปกรณ์ ${
+          newNotification.attributes.device.attributes.name
+        }  ${newNotification.attributes.device.attributes.description}\r\n${
+          newNotification.attributes.parameter.attributes.nameTh
+        } มีค่า ${
           newNotification.attributes.history.attributes.value[
             newNotification.attributes.parameter.attributes.key
           ]
@@ -323,5 +237,3 @@ const notificaitonSocket = async ({ device, newNotification }) => {
     console.log("error", error);
   }
 };
-
-export default mqttServer;
