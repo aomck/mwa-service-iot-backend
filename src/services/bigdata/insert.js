@@ -13,7 +13,7 @@ export default async (device_code, datetime, data) => {
     );
   });
   // console.log(dataQuery);
-  var query = `INSERT INTO ll_mwa_iot.iot_platform (device_code,created_at,key,value}) VALUES [${dataQuery.join()}]`;
+  var query = `INSERT INTO ll_mwa_iot.iot_platform (device_code,created_at,key,value) VALUES (${dataQuery.join()})`;
   if (process.env.BIGDATA === "True") {
     console.log(query);
     const python = spawn(process.env.PYTHON_PATH, [
