@@ -5,16 +5,16 @@ import axios from "axios";
 import { format } from "date-fns";
 import th from "date-fns/locale/th";
 import { createClient } from "node-impala";
-import { insert } from "../bigdata/index";
+import { insert } from "../bigdata";
 import { create } from "../device";
 
-const client = createClient();
+// const client = createClient();
 
-client.connect({
-  host: "127.0.0.1",
-  port: 21000,
-  resultType: "json-array",
-});
+// client.connect({
+//   host: "127.0.0.1",
+//   port: 21000,
+//   resultType: "json-array",
+// });
 
 const mqttServer = async () => {
   try {
@@ -87,8 +87,8 @@ const mqttServer = async () => {
               { ...device.get("value"), ...valueDevice },
               device.id
             );
+            insert(device.attributes.code, datetime, valueDevice);
             const history = await createHistorty(valueDevice, device);
-            // insert(device.attributes.code, datetime, ...valueDevice);
             // const historyImpala = await insert(
             //   device.attributes.code,
             //   ...valueDevice
@@ -150,9 +150,7 @@ const createHistorty = async (payload, code) => {
   return await history.save();
 };
 
-const insertImpala = (x, y) => {
-  console.log(x, y);
-};
+
 
 const getParameterAndCreateNotification = async ({
   device,
@@ -281,16 +279,18 @@ const notificaitonSocket = async ({ device, newNotification }) => {
     const mainNotiRes = await axios.post(
       `${process.env.CLIENT_API}/apis/notification`,
       {
-        system: "5ndjW8i898", 
-        
+        system: "5ndjW8i898",
+
         units: [],
         roles: [],
         users: notiUser,
-        type: "zjMu2CPtGB", 
+        type: "zjMu2CPtGB",
         title: "ค่าพารามิเตอร์ไม่เป็นไปตามเกณฑ์",
-        message: `อุปกรณ์ ${newNotification.attributes.device.attributes.name}  ${
-          newNotification.attributes.device.attributes.description
-        }\r\n${newNotification.attributes.parameter.attributes.nameTh} มีค่า ${
+        message: `อุปกรณ์ ${
+          newNotification.attributes.device.attributes.name
+        }  ${newNotification.attributes.device.attributes.description}\r\n${
+          newNotification.attributes.parameter.attributes.nameTh
+        } มีค่า ${
           newNotification.attributes.history.attributes.value[
             newNotification.attributes.parameter.attributes.key
           ]

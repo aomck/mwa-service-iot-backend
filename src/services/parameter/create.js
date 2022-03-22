@@ -10,6 +10,7 @@ export default async ({ body,files, user_id }) => {
     const parameter = new parameterObj();
     parameter.set("updatedBy", user_id);
     parameter.set("createdBy", user_id);
+    body.isActive = true;
 
     if (files && files.length > 0) {
       files.map(async (file) => {

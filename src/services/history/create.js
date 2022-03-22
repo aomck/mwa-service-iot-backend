@@ -1,19 +1,11 @@
 import { io } from "../../index";
-import { createClient } from "node-impala";
 import {
   getDeviceId,
   updateDeviceValue,
   createHistorty,
 } from "../../utils/data/history";
 import { getParameterAndCreateNotification } from "../../utils/data/notification";
-
-const client = createClient();
-
-client.connect({
-  host: "127.0.0.1",
-  port: 21000,
-  resultType: "json-array",
-});
+import { insert } from "../bigdata";
 
 export default async ({ body, device_code, device_token }) => {
   try {
@@ -37,7 +29,6 @@ export default async ({ body, device_code, device_token }) => {
       noti_payload
     );
     io.emit(`iot/${device.attributes.station.get("code")}`, noti_payload);
-
     for (const [key, value] of Object.entries(payload)) {
       getParameterAndCreateNotification({
         device,
@@ -46,6 +37,8 @@ export default async ({ body, device_code, device_token }) => {
         key,
       });
     }
+    insert(device_code, datetime, payload);
+    return "success";
     // console.log("result Update Device Value", resultUpDevice.get("value"));
   } catch (error) {
     console.log("error Device Connection", error);

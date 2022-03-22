@@ -3,7 +3,7 @@ import { parameterService } from "../services";
 export const getAll = async (req, res) => {
   try {
     const { user_id, query } = req;
-    const respData = await parameterService.list({ user_id,query });
+    const respData = await parameterService.list({ user_id, query });
     res.json(respData);
   } catch (error) {
     res
@@ -15,7 +15,7 @@ export const getAll = async (req, res) => {
 export const getDisplay = async (req, res) => {
   try {
     const { user_id, query } = req;
-    const respData = await parameterService.listDisplay({ user_id,query });
+    const respData = await parameterService.listDisplay({ user_id, query });
     res.json(respData);
   } catch (error) {
     res
@@ -65,13 +65,15 @@ export const update = async (req, res) => {
 
 export const deleteByid = async (req, res) => {
   const {
-    params: { projectId },
-    user_id
+    params: { parameterId },
+    user_id,
   } = req;
-
-
+  console.log("control param", parameterId, user_id);
   try {
-    const respData = await parameterService.deleteById({ projectId });
+    const respData = await parameterService.deleteById({
+      parameterId,
+      user_id,
+    });
     res.status(200).json({
       success: true,
       message: "project has been deleted successfully",

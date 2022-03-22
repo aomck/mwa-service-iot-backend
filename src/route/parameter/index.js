@@ -8,15 +8,11 @@ const router = express.Router();
 //getAll
 router.get("/", parameterController.getAll);
 router.get("/display", parameterController.getDisplay);
-router.post(
-    "/",
-    upload.array("files"),
-    parameterController.create
-  );
+router.post("/", upload.array("files"), parameterController.create);
 router.patch(
-    "/:parameterId",
-    upload.array("files"),
-    parameterController.update
-  );
-  router.delete("/:parameterId", parameterController.deleteByid);
+  "/:parameterId",
+  upload.array("files"),
+  parameterController.update
+);
+router.delete("/:parameterId", parameterController.deleteByid);
 export default router;

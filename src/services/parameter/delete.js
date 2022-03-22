@@ -1,13 +1,14 @@
 import Parse from "../../configs/parse-iot";
 
-export default async ({ projectId, user_id }) => {
+export default async ({ parameterId, user_id }) => {
   try {
-    const projectObj = Parse.Object.extend("Project");
-    const project = new projectObj();
-    project.id = projectId;
-    project.set("isDeleted", true);
-    project.set("updatedBy", user_id);
-    return await project.save();
+    console.log("del param ", parameterId, user_id);
+    const parameterObj = Parse.Object.extend("Parameter");
+    const parameter = new parameterObj();
+    parameter.id = parameterId;
+    parameter.set("isDeleted", true);
+    parameter.set("updatedBy", user_id);
+    return await parameter.save();
   } catch (error) {
     console.log("error", error);
   }
