@@ -8,7 +8,8 @@ export default async ({ user_id, query }) => {
     const adminQuery = new Parse.Query("Project").equalTo("admin", user_id);
     const managerQuery = new Parse.Query("Project").equalTo("manager", user_id);
     const viewerQuery = new Parse.Query("Project").equalTo("viewer", user_id);
-    let roleQuery = Parse.Query.or(adminQuery, managerQuery, viewerQuery);
+    const createdQuery = new Parse.Query("Project").equalTo("createdBy", user_id);
+    let roleQuery = Parse.Query.or(adminQuery, managerQuery, viewerQuery,createdQuery);
     let allQuery = new Parse.Query("Project");
     if (query.search) {
       let codeQuery = new Parse.Query("Project");
