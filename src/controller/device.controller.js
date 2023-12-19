@@ -1,4 +1,5 @@
 import { deviceService } from "../services";
+import { parse, getUnixTime } from "date-fns";
 
 export const getAll = async (req, res) => {
   try {
@@ -68,6 +69,7 @@ export const getHistoryById = async (req, res) => {
       params: { deviceId },
     } = req;
     const respData = await deviceService.viewHistory({ deviceId });
+
     res.json(respData);
   } catch (error) {
     res
@@ -164,5 +166,3 @@ export const deleteByid = async (req, res) => {
       .json({ statusCode: "500", message: "Internal Server Error" });
   }
 };
-
-

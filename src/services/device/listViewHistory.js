@@ -8,22 +8,24 @@ export default async ({ deviceId, query }) => {
     historyQuery.select("value");
     historyQuery.limit(await historyQuery.count());
 
-    console.log(
-      "  new Date(parseInt(query.startDate)) ::",
-      new Date(parseInt(query.startDate))
-    );
+    console.log("  new Date(parseInt(query.startDate)) ::", query.startDate);
 
+    // query?.startDate &&
+    //   historyQuery.greaterThanOrEqualTo(
+    //     "createdAt",
+    //     new Date(parseInt(query.startDate))
+    //   );
     query?.startDate &&
-      historyQuery.greaterThanOrEqualTo(
-        "createdAt",
-        new Date(parseInt(query.startDate))
-      );
+      historyQuery.greaterThanOrEqualTo("createdAt", new Date(query.startDate));
+
+    // query?.endDate &&
+    //   historyQuery.lessThanOrEqualTo(
+    //     "createdAt",
+    //     new Date(parseInt(query.endDate))
+    //   );
 
     query?.endDate &&
-      historyQuery.lessThanOrEqualTo(
-        "createdAt",
-        new Date(parseInt(query.endDate))
-      );
+      historyQuery.lessThanOrEqualTo("createdAt", new Date(query.endDate));
 
     historyQuery.equalTo("device", {
       __type: "Pointer",

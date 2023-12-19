@@ -59,7 +59,8 @@ app.use(morgan("dev"));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use("/apis", checkUser, route);
+// app.use("/apis", checkUser, route);
+app.use("/apis",  route);
 app.use("/lora-api", lora);
 app.use("/history/:device_code", checkDevice, history);
 app.get("/api/swagger", (req, res) => {
